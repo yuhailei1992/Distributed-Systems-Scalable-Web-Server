@@ -14,7 +14,7 @@ TOPLEVEL : Jewelry, Electronics, Office Supplies, Pets
 # Jewelry Department ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Jewelry : Ring, Necklace, Earring, Bracelet
 Ring: Aquamarine Diamond Fashion Ring, London Blue Topaz Ring, Diamond Square Ring, Diamond Double Halo Ring, Blue Topaz Ring, Two-Tone Blue Diamond Ring, Blue Sapphire Ring, Freshwater Pearl Ring
-Necklace: Teardrop London Blue Topaz Necklace, Sterling Silver Blue Topaz & Diamond Necklace, Sky Blue Topaz, Diamond Necklace, Faceted Heart Shaped Blue Topaz Necklace, Aquamarine Pendant Necklace, Diamond Leaf Pendant Necklace, Diamond Heart Necklace, Freshwater Pearl Necklace
+Necklace: Teardrop London Blue Topaz Necklace, Sterling Silver Blue Topaz & Diamond Necklace, Sky Blue Topaz & Diamond Necklace, Faceted Heart Shaped Blue Topaz Necklace, Aquamarine Pendant Necklace, Diamond Leaf Pendant Necklace, Diamond Heart Necklace, Freshwater Pearl Necklace
 Earring: Blue Topaz & Pave Diamond Drop Earrings, Scalloped Diamond Halo Earrings, Pave Diamond Wrapped Drop Earrings, Cushion Cut Blue Topaz Earrings, Topaz Stud Earrings, Topaz Leaf Earrings, Green Amethyst Sunburst Earrings, Freshwater Pearl Earring
 Bracelet: Interlinked Diamond Circle Charm Bracelet, Diamond Crossover Detail Bangle, Sterling Silver Diamond Flower Link, Sterling Silver Skinny Pave Diamond Bangle, Diamond Heart Charm Bracelet, Sterling Silver Diamond XOXO Charm Bracelet, Blue Diamond Twisted Circle Link Bracelet
 # ------------ Rings ---------------------------------------------------------
@@ -29,7 +29,7 @@ Freshwater Pearl Ring : ITEM : 328.00 : 1855
 # ------------ Necklaces -----------------------------------------------------
 Teardrop London Blue Topaz Necklace : ITEM : 566.35 : 1498
 Sterling Silver Blue Topaz & Diamond Necklace : ITEM : 535.97 : 3792
-Sky Blue Topaz, Diamond Necklace : ITEM : 656.75 : 2747
+Sky Blue Topaz & Diamond Necklace : ITEM : 656.75 : 2747
 Faceted Heart Shaped Blue Topaz Necklace : ITEM : 601.60 : 1133
 Aquamarine Pendant Necklace : ITEM : 428.56 : 3964
 Diamond Leaf Pendant Necklace : ITEM : 882.18 : 1363

@@ -1,3 +1,4 @@
+
 /* Sample code for basic Server */
 import java.rmi.Naming;
 import java.net.MalformedURLException;
@@ -29,10 +30,22 @@ public class Server {
 		
 		// create enough VMs
 		float time = SL.getTime();
-		if (time > 7.5 && time < 8.5 && isMaster) {
-			System.err.println("8 am now, need to create 3 VMs");
-			for (int i = 0; i < 3; i++) {
-				SL.startVM();
+
+		if (isMaster) {
+			if (time > 5.9 && time < 6.1) {// 6am
+				for (int i = 1; i < 2; i++) {
+					SL.startVM();
+				}
+			}
+			else if (time > 7.9 && time < 8.1) {// 6am
+				for (int i = 0; i < 3; i++) {
+					SL.startVM();
+				}
+			}
+			else if (time > 18.9 && time < 19.1) {// 6am
+				for (int i = 0; i < 6; i++) {
+					SL.startVM();
+				}
 			}
 		}
 		
@@ -43,4 +56,5 @@ public class Server {
 		}
 	}
 }
+
 
