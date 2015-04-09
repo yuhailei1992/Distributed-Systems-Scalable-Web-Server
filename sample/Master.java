@@ -8,11 +8,16 @@ import java.util.concurrent.Exchanger;
 
 public class Master extends UnicastRemoteObject implements IMaster{
 
+    public static final int MANAGER_COOLDOWN = 100;
+    public static final int MAX_VM_NUM = 15;
+    public static final int INITIAL_DROP_PERIOD = 3500;
+    public static final int SCALE_IN_THRESHOLD = 80;
+
     public static String ip;
     public static Integer port;
     public static ServerLib SL;
     public static Integer numVM;
-    public static Integer scaleDownCount;
+    public static Integer scaleInCounter;
 
     public static java.util.LinkedList<Cloud.FrontEndOps.Request> requestQueue;
     public static java.util.LinkedList<Integer> roleQueue;
@@ -26,7 +31,7 @@ public class Master extends UnicastRemoteObject implements IMaster{
         this.port = port;
         this.SL = SL;
         numVM = 0;
-        scaleDownCount = 0;
+        scaleInCounter = 0;
 
         requestQueue = new java.util.LinkedList<Cloud.FrontEndOps.Request>();
         roleQueue = new java.util.LinkedList<Integer>();
@@ -85,16 +90,11 @@ public class Master extends UnicastRemoteObject implements IMaster{
         public void run() {
             System.err.println("Front end has started");
             SL.register_frontend();
-            Long starttime = System.currentTimeMillis();
+            Long startTime = System.currentTimeMillis();
             while (true) { // get a request, add it to the queue
                 Cloud.FrontEndOps.Request r = SL.getNextRequest();
-                /*if (SL.getStatusVM(2) == Cloud.CloudOps.VMStatus.Booting) {
-                    SL.drop(r);
-                } else {
-                    requestQueue.add(r);
-                }*/
-                Long currtime = System.currentTimeMillis();
-                if (currtime - starttime < 3000) {
+                Long currTime = System.currentTimeMillis();
+                if (currTime - startTime < INITIAL_DROP_PERIOD) {
                     SL.drop(r);
                 } else {
                     requestQueue.add(r);
@@ -103,10 +103,11 @@ public class Master extends UnicastRemoteObject implements IMaster{
         }
     }
 
-    public synchronized void scaleUp() {
+    public synchronized void scaleOut() {
         roleQueue.add(1); // add a role
         SL.startVM(); // start a VM
-        System.err.println("Scaling up");
+        numVM++;
+        System.err.println("Scaling out");
     }
 
     // a thread for managing
@@ -116,26 +117,57 @@ public class Master extends UnicastRemoteObject implements IMaster{
 
         public void run(){
             System.err.println("Management thread running");
+            Long startTime = System.currentTimeMillis();
             while (true) {
-                if (requestQueue.size() > numVM && numVM < 14) {
-                    // scale up
-                    scaleDownCount = 0;
-                    numVM++;
-                    scaleUp();
+                int queueLength = requestQueue.size();
+                // System.err.println("The queuelen is " + queueLength + "The numVM is " + numVM);
+                /*if (queueLength > 3 * numVM && numVM < MAX_VM_NUM) {
+                    for (int i = 0; i < numVM; i++) {
+                        Cloud.FrontEndOps.Request r = SL.getNextRequest();
+                        SL.drop(r);
+                    }
+                    scaleOut();
+                    scaleOut();
+                } else if (queueLength > 2 * numVM && numVM < MAX_VM_NUM) {
+                    System.err.println("SCALE 2");
+                    for (int i = 0; i < numVM / 2; i++) {
+                        Cloud.FrontEndOps.Request r = SL.getNextRequest();
+                        SL.drop(r);
+                    }
+                    scaleInCounter = 0;
+                    scaleOut();
+                    //scaleOut();
+                } else */
 
-                    /*try {
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }*/
+                Long currTime = System.currentTimeMillis();
+                /*if (currTime - startTime >= INITIAL_DROP_PERIOD &&
+                        SL.getStatusVM(2) == Cloud.CloudOps.VMStatus.Booting) {
+                    if (requestQueue.size() > numVM - 2) {
+                        scaleOut();
+                        System.err.println("Premature scaleout");
+                    }
+                }*/
 
+                if (requestQueue.size() > (numVM + 3) && numVM < MAX_VM_NUM) {
+
+                    System.err.println("SCALE 1");
+                    // scale out
+                    scaleInCounter = 0;
+                    scaleOut();
+                    // drop some requests.
+                    int numToDrop = (requestQueue.size() - numVM) ;
+                    for (int i = 0; i < numToDrop; i++) {
+                        Cloud.FrontEndOps.Request r = null;
+                        r = requestQueue.poll();
+                        if (r != null) SL.drop(r);
+                    }
                 } else {
-                    scaleDownCount++;
-                    if (scaleDownCount > 100) {
-                        // scale down
+                    scaleInCounter++;
+                    if (scaleInCounter > SCALE_IN_THRESHOLD) {
+                        // scale in
                         numVM--;
-                        scaleDownCount = 0;
-                        System.err.println("Scaling down");
+                        scaleInCounter = 0;
+                        System.err.println("Scaling in");
                         String name = middleList.poll();
                         if (name != null) {
                             IMiddle middle = getMiddleInstance(ip, port, name);
@@ -147,13 +179,11 @@ public class Master extends UnicastRemoteObject implements IMaster{
                         }
                     }
                 }
-
                 try{
-                    Thread.sleep(250);
+                    Thread.sleep(MANAGER_COOLDOWN);
                 }catch(InterruptedException e){
                     System.err.println("Got interrupted!");
                 }
-
             }
         }
     }

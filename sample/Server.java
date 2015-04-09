@@ -1,3 +1,4 @@
+
 import java.io.File;
 import java.io.Serializable;
 import java.rmi.AlreadyBoundException;
@@ -13,18 +14,12 @@ import java.sql.Timestamp;
 
 public class Server {
 
+    public static final int INITIAL_MIDDLE_LAYER = 2;
     public static boolean isMaster;
     /**
      * get the current timestamp as a string
      * @return
      */
-    public static String getTimeStamp() {
-        // get timestamp
-        java.util.Date date= new java.util.Date();
-        Timestamp ts = new Timestamp(date.getTime());
-        return ts.toString().replaceAll("\\s+", "at");
-    }
-
     public static IMaster getMasterInstance(String ip, int port) {
         String url = String.format("//%s:%d/Master", ip, port);
         try {
@@ -62,15 +57,10 @@ public class Server {
             Master master = new Master(ip, port, SL);
             master.startManager();
             master.startFront();
-
-            master.roleQueue.add(1);
-            master.roleQueue.add(1);
-            //master.roleQueue.add(1);
             // start a middle layer server
-            SL.startVM();
-            SL.startVM();
-            //SL.startVM();
-            master.numVM = 2;
+            for (int i = 0; i < INITIAL_MIDDLE_LAYER; i++) {
+                master.scaleOut();
+            }
         } else {
             // start the corresponding thread according to the response
             Middle middle = new Middle(ip, port, SL);
