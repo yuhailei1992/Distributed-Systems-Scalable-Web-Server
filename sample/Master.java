@@ -117,39 +117,8 @@ public class Master extends UnicastRemoteObject implements IMaster{
 
         public void run(){
             System.err.println("Management thread running");
-            Long startTime = System.currentTimeMillis();
             while (true) {
-                int queueLength = requestQueue.size();
-                // System.err.println("The queuelen is " + queueLength + "The numVM is " + numVM);
-                /*if (queueLength > 3 * numVM && numVM < MAX_VM_NUM) {
-                    for (int i = 0; i < numVM; i++) {
-                        Cloud.FrontEndOps.Request r = SL.getNextRequest();
-                        SL.drop(r);
-                    }
-                    scaleOut();
-                    scaleOut();
-                } else if (queueLength > 2 * numVM && numVM < MAX_VM_NUM) {
-                    System.err.println("SCALE 2");
-                    for (int i = 0; i < numVM / 2; i++) {
-                        Cloud.FrontEndOps.Request r = SL.getNextRequest();
-                        SL.drop(r);
-                    }
-                    scaleInCounter = 0;
-                    scaleOut();
-                    //scaleOut();
-                } else */
-
-                Long currTime = System.currentTimeMillis();
-                /*if (currTime - startTime >= INITIAL_DROP_PERIOD &&
-                        SL.getStatusVM(2) == Cloud.CloudOps.VMStatus.Booting) {
-                    if (requestQueue.size() > numVM - 2) {
-                        scaleOut();
-                        System.err.println("Premature scaleout");
-                    }
-                }*/
-
                 if (requestQueue.size() > (numVM + 3) && numVM < MAX_VM_NUM) {
-
                     System.err.println("SCALE 1");
                     // scale out
                     scaleInCounter = 0;
