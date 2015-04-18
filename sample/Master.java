@@ -1,10 +1,8 @@
 import java.net.MalformedURLException;
 import java.rmi.*;
-import java.rmi.registry.LocateRegistry;
 import java.util.*;
 import java.io.IOException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.concurrent.Exchanger;
 
 public class Master extends UnicastRemoteObject implements IMaster{
 
@@ -170,6 +168,26 @@ public class Master extends UnicastRemoteObject implements IMaster{
             System.err.println("Not bound " + e);
         }
         return null;
+    }
+
+
+    public class Cache extends Thread {
+
+        public Cache() throws IOException {}
+
+        public void run() {
+            System.err.println("Cache end has started");
+            Long startTime = System.currentTimeMillis();
+            while (true) { // get a request, add it to the queue
+                Cloud.FrontEndOps.Request r = SL.getNextRequest();
+                Long currTime = System.currentTimeMillis();
+                if (currTime - startTime < INITIAL_DROP_PERIOD) {
+                    SL.drop(r);
+                } else {
+                    requestQueue.add(r);
+                }
+            }
+        }
     }
 
 }
