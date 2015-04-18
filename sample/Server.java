@@ -48,6 +48,7 @@ public class Server {
             Master master = new Master(ip, port, SL);
             master.startManager();
             master.startFront();
+            Cache cache = new Cache(ip, port);
             // start a middle layer server
             for (int i = 0; i < INITIAL_MIDDLE_LAYER; i++) {
                 master.scaleOut();

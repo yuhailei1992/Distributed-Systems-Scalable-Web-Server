@@ -139,7 +139,7 @@ public class Master extends UnicastRemoteObject implements IMaster{
                         if (name != null) {
                             IMiddle middle = getMiddleInstance(ip, port, name);
                             try {
-                                middle.killSelf();
+                                middle.suicide();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -155,7 +155,6 @@ public class Master extends UnicastRemoteObject implements IMaster{
         }
     }
 
-
     public static IMiddle getMiddleInstance(String ip, int port, String name) {
         String url = String.format("//%s:%d/%s", ip, port, name);
         try {
@@ -168,26 +167,6 @@ public class Master extends UnicastRemoteObject implements IMaster{
             System.err.println("Not bound " + e);
         }
         return null;
-    }
-
-
-    public class Cache extends Thread {
-
-        public Cache() throws IOException {}
-
-        public void run() {
-            System.err.println("Cache end has started");
-            Long startTime = System.currentTimeMillis();
-            while (true) { // get a request, add it to the queue
-                Cloud.FrontEndOps.Request r = SL.getNextRequest();
-                Long currTime = System.currentTimeMillis();
-                if (currTime - startTime < INITIAL_DROP_PERIOD) {
-                    SL.drop(r);
-                } else {
-                    requestQueue.add(r);
-                }
-            }
-        }
     }
 
 }

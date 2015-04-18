@@ -1,30 +1,42 @@
 import Cloud.DatabaseOps;
 
 import java.net.MalformedURLException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
 public class Cache extends UnicastRemoteObject implements DatabaseOps {
-    private final HashMap<String, String> DB;
-    private final String authString;
-
-    public Cache(String auth) throws RemoteException {
-        super(0);
+    public static HashMap<String, String> DB;
+    public static ServerLib SL;
+    private String authString;
+    // seems that the cache doesn't need auth, because it doesn't handle purchases
+    public Cache(String ip, int port) throws RemoteException {
+        // bind
+        try {
+            Naming.bind(String.format("//%s:%d/Cache", ip, port), this);
+        } catch (AlreadyBoundException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        // create a cache
         this.DB = new HashMap();
-        this.authString = auth;
+        // create a serverlib
+        this.SL = new ServerLib(ip, port);
+        System.err.println("Created a cache");
     }
 
-    /*
-    public Cache(Database db, String auth) throws RemoteException {
-        super(0);
-        this.DB = new HashMap(db.DB);
-        this.authString = auth;
-    }
-    */
 
+    public synchronized boolean hasItem(String item) throws RemoteException {
+        if (this.DB.containsKey(item)) {
+            return true;
+        }
+        return false;
+    }
 
     public synchronized void shutDown() throws RemoteException {
         UnicastRemoteObject.unexportObject(this, true);
@@ -32,8 +44,15 @@ public class Cache extends UnicastRemoteObject implements DatabaseOps {
 
 
     public synchronized String get(String key) throws RemoteException {
-
-        return this.DB.get(key.trim());
+        key = key.trim();
+        if (this.DB.containsKey(key)) {
+            return this.DB.get(key);
+        } else {
+            // get from db, and write into the hashmap
+            String value = SL.getDB().get(key);
+            this.DB.put(key, value.trim());
+            return value.trim();
+        }
     }
 
     public synchronized boolean set(String item, String value, String auth) throws RemoteException {
@@ -66,20 +85,4 @@ public class Cache extends UnicastRemoteObject implements DatabaseOps {
         }
     }
 
-    /*
-      how to register the db as a rmi?
-     */
-    public static IMiddle getDatabaseInstance(String ip, int port, String name) {
-        String url = String.format("//%s:%d/%s", ip, port, name);
-        try {
-            return (IMiddle)(Naming.lookup(url));
-        } catch (MalformedURLException e) {
-            System.err.println("Bad URL" + e);
-        } catch (RemoteException e) {
-            System.err.println("Remote connection refused to url "+ url + " " + e);
-        } catch (NotBoundException e) {
-            System.err.println("Not bound " + e);
-        }
-        return null;
-    }
 }

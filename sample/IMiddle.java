@@ -6,5 +6,5 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface IMiddle extends Remote {
-    public boolean killSelf() throws RemoteException;
+    public boolean suicide() throws RemoteException;
 }
