@@ -64,6 +64,7 @@ public class Front extends UnicastRemoteObject implements IFront {
                         master.enQueue(new RequestWithTimestamp(r));
                         // check if need to add front
                         if (len > FRONT_THRESHOLD) {
+                            System.err.println("Front:: need to scale out. my queue len is " + len);
                             master.addFront();
                         }
                     } else {

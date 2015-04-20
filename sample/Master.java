@@ -7,10 +7,10 @@ import java.rmi.server.UnicastRemoteObject;
 public class Master extends UnicastRemoteObject implements IMaster{
 
     public static final int MANAGER_COOLDOWN = 100;
-    public static final int MAX_MIDDLE_VM_NUM = 15;
-    public static final int MAX_FRONT_VM_NUM = 2;
+    public static final int MAX_MIDDLE_VM_NUM = 13;
+    public static final int MAX_FRONT_VM_NUM = 1;
     public static final int INITIAL_DROP_PERIOD = 4500;
-    public static final int SCALE_IN_MIDDLE_THRESHOLD = 70;
+    public static final int SCALE_IN_MIDDLE_THRESHOLD = 100;
     public static final int SCALE_IN_FRONT_THRESHOLD = 100;
     public static final long PURCHASE_REQUEST_TIMEOUT = 1300;
     public static final long REGULAR_REQUEST_TIMEOUT = 300;
@@ -28,7 +28,8 @@ public class Master extends UnicastRemoteObject implements IMaster{
     public static java.util.LinkedList<String> middleList;
     public static java.util.LinkedList<String> frontList;
 
-    public static Integer numVM;
+    public static Integer numMiddleVM;
+    public static Integer numFrontVM;
 
     // bind in constructor
     public Master(String ip, int port, ServerLib SL) throws RemoteException{
@@ -36,7 +37,8 @@ public class Master extends UnicastRemoteObject implements IMaster{
         this.ip = ip;
         this.port = port;
         this.SL = SL;
-        numVM = 0;
+        numFrontVM = 0;
+        numMiddleVM = 0;
         scaleInFrontCounter = 0;
         scaleInMiddleCounter = 0;
 
@@ -65,11 +67,7 @@ public class Master extends UnicastRemoteObject implements IMaster{
 
     public boolean needDropFront() {
         //System.err.println("Called needDropFront, the queue size is " + requestQueue.size() + "; number of VM is " + numVM);
-        if (requestQueue.size() > numVM) {
-            return true;
-        } else {
-            return false;
-        }
+        return true;
     }
 
     // dequeue
@@ -107,13 +105,12 @@ public class Master extends UnicastRemoteObject implements IMaster{
 
         int role = roleQueue.poll();
         if (role == 0) {//front
-            System.err.println("Frontlist: " + frontList);
+            System.err.println("getRole::Frontlist: " + frontList);
             frontList.add(name);
         } else {
             middleList.add(name);
-            System.err.println("Middlelist: " + middleList);
+            System.err.println("getRole::Middlelist: " + middleList);
         }
-        System.err.println("Called getRole + " + name + " Role is " + role);
         return role;
     }
 
@@ -158,35 +155,34 @@ public class Master extends UnicastRemoteObject implements IMaster{
     }
 
     public synchronized void scaleOutMiddle() {
-        if (middleList.size() > MAX_MIDDLE_VM_NUM) return;
+        if (numMiddleVM > MAX_MIDDLE_VM_NUM) return;
 
         roleQueue.add(1); // add a role
         SL.startVM(); // start a VM
-        synchronized (numVM){
-            numVM++;
+        synchronized (numMiddleVM){
+            numMiddleVM++;
         }
-        System.err.println("Scaling out middle, now the num of VM is " + numVM);
+        System.err.println("Scaling out middle, now the num of middle VM is " + numMiddleVM);
     }
 
     public synchronized void scaleOutFront() {
-        if (frontList.size() > MAX_FRONT_VM_NUM) return;
-
+        if (numFrontVM > MAX_FRONT_VM_NUM) return;
         roleQueue.add(0);
         SL.startVM();
-        synchronized (numVM){
-            numVM++;
+        synchronized (numFrontVM){
+            numFrontVM++;
         }
-        System.err.println("Scaling out front,  now the num of VM is " + numVM);
+        System.err.println("Scaling out front,  now the num of front VM is " + numFrontVM);
     }
 
     public synchronized void scaleInMiddle() {
         scaleInMiddleCounter = 0;
-        System.err.println("Scaling in middle, now the num of VM is " + numVM);
+        System.err.println("Scaling in middle, now the num of middle VM is " + numMiddleVM);
         String name = middleList.poll();
         System.err.println("The middle name is " + name);
         if (name != null) {
-            synchronized (numVM){
-                numVM--;
+            synchronized (numMiddleVM){
+                numMiddleVM--;
             }
             try {
                 IMiddle middle = getMiddleInstance(ip, port, name);
@@ -200,12 +196,12 @@ public class Master extends UnicastRemoteObject implements IMaster{
     public synchronized void scaleInFront() {
 
         scaleInFrontCounter = 0;
-        System.err.println("Scaling in front, now the num of VM is " + numVM);
+        System.err.println("Scaling in front, now the num of front VM is " + numFrontVM);
         String name = frontList.poll();
         System.err.println("The front name is " + name);
         if (name != null) {
-            synchronized (numVM){
-                numVM--;
+            synchronized (numFrontVM){
+                numFrontVM--;
             }
             try {
                 IFront front = getFrontInstance(ip, port, name);
@@ -225,19 +221,19 @@ public class Master extends UnicastRemoteObject implements IMaster{
             System.err.println("Management thread running");
             while (true) {
                 // judge if scale out middle
-                if (requestQueue.size() > numVM && numVM < MAX_MIDDLE_VM_NUM) {
+                if (requestQueue.size() > numMiddleVM && numMiddleVM < MAX_MIDDLE_VM_NUM) {
                     // scale out
                     scaleInMiddleCounter = 0;
 
-                    int numToStart = (requestQueue.size() - numVM);
+                    int numToStart = (requestQueue.size() - numMiddleVM);
                     System.err.println("need to scaleOutMiddle, the queue size is " + requestQueue.size() +
-                            "; number of VM is " + numVM +
+                            "; number of VM is " + numMiddleVM +
                             "; numToStart is " + numToStart);
                     for (int i = 0; i < numToStart; i++) {
                         scaleOutMiddle();
                     }
                     // drop some requests.
-                    int numToDrop = (requestQueue.size() - numVM);
+                    int numToDrop = (requestQueue.size() - numMiddleVM);
                     for (int i = 0; i < numToDrop; i++) {
                         Cloud.FrontEndOps.Request r;
                         r = requestQueue.poll().r;
