@@ -13,7 +13,7 @@ public class Master extends UnicastRemoteObject implements IMaster{
     public static final int SCALE_IN_MIDDLE_THRESHOLD = 3000000;
     public static final long PURCHASE_REQUEST_TIMEOUT = 1400;
     public static final long REGULAR_REQUEST_TIMEOUT = 400;
-    public static final float scaleOutMiddleFactor = 0.8f;
+    public static final float scaleOutMiddleFactor = 0.3f;
     public static long startTime = 0;
 
     public static Cloud.DatabaseOps cache;
@@ -238,12 +238,12 @@ public class Master extends UnicastRemoteObject implements IMaster{
                         scaleOutMiddle();
                     }
                     // drop some requests.
-                    int numToDrop = (requestQueue.size() - numMiddleVM);
-                    for (int i = 0; i < numToDrop; i++) {
-                        Cloud.FrontEndOps.Request r;
-                        r = requestQueue.poll().r;
-                        if (r != null) SL.drop(r);
-                    }
+//                    int numToDrop = (requestQueue.size() - numMiddleVM);
+//                    for (int i = 0; i < numToDrop; i++) {
+//                        Cloud.FrontEndOps.Request r;
+//                        r = requestQueue.poll().r;
+//                        if (r != null) SL.drop(r);
+//                    }
                 } else {
                     scaleInMiddleCounter++;
                     if (scaleInMiddleCounter > SCALE_IN_MIDDLE_THRESHOLD) {

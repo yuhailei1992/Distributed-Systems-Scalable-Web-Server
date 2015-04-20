@@ -10,7 +10,7 @@ public class Front extends UnicastRemoteObject implements IFront {
     public static ServerLib SL;
     public static String name;
     public static final int FRONT_THRESHOLD = 6;
-    public static final int FRONT_COOLDOWN = 40;
+    public static final int FRONT_COOLDOWN = 70;
     public static final int FRONT_SCALE_IN_THRESHOLD = 3000;
 
     /**
