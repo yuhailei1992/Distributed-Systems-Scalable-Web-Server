@@ -6,27 +6,25 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.*;
 import java.rmi.server.UnicastRemoteObject;
-import java.sql.Timestamp;
 
-public class Middle extends UnicastRemoteObject {
+public class Middle extends UnicastRemoteObject implements IMiddle{
 
     public static IMaster master;
     public static ServerLib SL;
     public static String name;
-    public static ICache cache;
-    public static final int MIDDLE_COOLDOWN = 1;
+    public static Cloud.DatabaseOps cache;
+    public static final int MIDDLE_COOLDOWN = 10;
 
     /**
      * constructor, bind the object to a name
      */
-    public Middle(String ip, int port, ServerLib SL) throws RemoteException{
+    public Middle(String ip, int port, ServerLib SL, String name) throws RemoteException{
         master = Server.getMasterInstance(ip, port);
-        cache = getCacheInstance(ip, port);
+        cache = Server.getCacheInstance(ip, port);
         this.SL = SL;
-        this.name = getTimeStamp();
+        this.name = name;
+
         // register at the serverside
-        master.getRole(this.name);
-        System.err.println("Done getRole");
         try {
             Naming.bind(String.format("//%s:%d/%s", ip, port, name), this);
         } catch (AlreadyBoundException e) {
@@ -40,9 +38,9 @@ public class Middle extends UnicastRemoteObject {
 
     /**
      * start a thread of middle
-     * @param SL
+     * @param
      */
-    public void startMiddle(ServerLib SL) {
+    public void startMiddle() {
         try {
             Processor processor = new Processor();
             processor.run();
@@ -58,17 +56,21 @@ public class Middle extends UnicastRemoteObject {
         }
 
         public void run() {
+            RequestWithTimestamp rwt;
             while (true) {
-                Cloud.FrontEndOps.Request r = null;
                 try {
                     // get a request
-                    r = master.deQueue();
-                    if (r != null) {
-                        if (!r.isPurchase && cache.hasItem(r.item)) {
-                            SL.processRequest(r, (Cloud.DatabaseOps)cache);
+                    rwt = master.deQueue();
+                    if (rwt != null) {
+                        if (!rwt.r.isPurchase) {
+                            System.err.println("Processing with cache, the elapsed time is " + (System.currentTimeMillis() - rwt.millis));
+                            SL.processRequest(rwt.r, cache);
                         } else {
-                            SL.processRequest(r);
+                            System.err.println("Processing with database, the elapsed time is " + + (System.currentTimeMillis() - rwt.millis));
+                            SL.processRequest(rwt.r);
                         }
+                    } else {
+                        Thread.sleep(MIDDLE_COOLDOWN);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -77,7 +79,7 @@ public class Middle extends UnicastRemoteObject {
         }
     }
 
-    public boolean suicide() {
+    public void suicide() {
         SL.shutDown();
         System.err.println("Shutting myself down");
         try {
@@ -85,28 +87,6 @@ public class Middle extends UnicastRemoteObject {
         } catch (NoSuchObjectException e) {
             e.printStackTrace();
         }
-        return true;
-    }
-
-    public static synchronized String getTimeStamp() {
-        // get timestamp
-        java.util.Date date= new java.util.Date();
-        Timestamp ts = new Timestamp(date.getTime());
-        return ts.toString().replaceAll("\\s+", "at");
-    }
-
-    public static ICache getCacheInstance(String ip, int port) {
-        String url = String.format("//%s:%d/%s", ip, port, "Cache");
-        try {
-            return (ICache)(Naming.lookup(url));
-        } catch (MalformedURLException e) {
-            System.err.println("Bad URL" + e);
-        } catch (RemoteException e) {
-            System.err.println("Remote connection refused to url "+ url + " " + e);
-        } catch (NotBoundException e) {
-            System.err.println("Not bound " + e);
-        }
-        return null;
     }
 
 }

@@ -1,5 +1,3 @@
-import Cloud.DatabaseOps;
-
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
@@ -7,7 +5,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
-public class Cache extends UnicastRemoteObject implements DatabaseOps {
+public class Cache extends UnicastRemoteObject implements Cloud.DatabaseOps {
     public static HashMap<String, String> DB;
     public static ServerLib SL;
     private String authString;
@@ -24,18 +22,10 @@ public class Cache extends UnicastRemoteObject implements DatabaseOps {
             e.printStackTrace();
         }
         // create a cache
-        this.DB = new HashMap();
+        this.DB = new HashMap<String, String>();
         // create a serverlib
         this.SL = new ServerLib(ip, port);
         System.err.println("Created a cache");
-    }
-
-
-    public synchronized boolean hasItem(String item) throws RemoteException {
-        if (this.DB.containsKey(item)) {
-            return true;
-        }
-        return false;
     }
 
     public synchronized void shutDown() throws RemoteException {
@@ -43,7 +33,7 @@ public class Cache extends UnicastRemoteObject implements DatabaseOps {
     }
 
 
-    public synchronized String get(String key) throws RemoteException {
+    public String get(String key) throws RemoteException {
         key = key.trim();
         if (this.DB.containsKey(key)) {
             return this.DB.get(key);
