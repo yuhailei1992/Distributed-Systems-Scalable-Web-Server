@@ -12,4 +12,8 @@ public interface IMaster extends Remote {
 
     public void addFront() throws RemoteException;
     public void removeFront() throws RemoteException;
+
+    public void addMiddle() throws RemoteException;
+    public void removeMiddle() throws RemoteException;
+
 }

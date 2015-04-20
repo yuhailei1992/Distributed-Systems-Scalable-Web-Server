@@ -9,8 +9,9 @@ public class Front extends UnicastRemoteObject implements IFront {
     public static IMaster master;
     public static ServerLib SL;
     public static String name;
-    public static final int FRONT_THRESHOLD = 5;
-    public static final int FRONT_COOLDOWN = 10;
+    public static final int FRONT_THRESHOLD = 6;
+    public static final int FRONT_COOLDOWN = 40;
+    public static final int FRONT_SCALE_IN_THRESHOLD = 3000;
 
     /**
      * constructor, bind the object to a name
@@ -48,24 +49,33 @@ public class Front extends UnicastRemoteObject implements IFront {
     public class FrontProcessor extends Thread {
 
         public FrontProcessor() throws IOException {
-            System.err.println("Frontend Processor started");
         }
 
         public void run() {
             System.err.println("Front end has started");
 
             SL.register_frontend();
+            int scaleInCounter = 0;
 
             while (true) { // get a request, add it to the queue
                 try {
                     int len = SL.getQueueLength();
                     if (len > 0) {
                         Cloud.FrontEndOps.Request r = SL.getNextRequest();
-                        master.enQueue(new RequestWithTimestamp(r));
+                        long millis = System.currentTimeMillis() - 60 * len;
+                        RequestWithTimestamp rwt = new RequestWithTimestamp(r, millis);
+                        master.enQueue(rwt);
                         // check if need to add front
                         if (len > FRONT_THRESHOLD) {
+                            scaleInCounter = 0;
                             System.err.println("Front:: need to scale out. my queue len is " + len);
                             master.addFront();
+                        } else {
+                            scaleInCounter++;
+                            if (scaleInCounter > FRONT_SCALE_IN_THRESHOLD) {
+                                master.removeFront();
+                                scaleInCounter = 0;
+                            }
                         }
                     } else {
                         Thread.sleep(FRONT_COOLDOWN);

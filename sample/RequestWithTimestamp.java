@@ -7,4 +7,9 @@ public class RequestWithTimestamp implements Serializable {
         this.millis = System.currentTimeMillis();
         this.r = r;
     }
+
+    public RequestWithTimestamp(Cloud.FrontEndOps.Request r, long millis) {
+        this.millis = millis;
+        this.r = r;
+    }
 }

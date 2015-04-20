@@ -12,8 +12,9 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
     public static IMaster master;
     public static ServerLib SL;
     public static String name;
+    public volatile boolean join;
     public static Cloud.DatabaseOps cache;
-    public static final int MIDDLE_COOLDOWN = 10;
+    public static final int MIDDLE_COOLDOWN = 1;
 
     /**
      * constructor, bind the object to a name
@@ -22,6 +23,7 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
         master = Server.getMasterInstance(ip, port);
         cache = Server.getCacheInstance(ip, port);
         this.SL = SL;
+        join = false;
         this.name = name;
 
         // register at the serverside
@@ -50,6 +52,8 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
     }
 
     public class Processor extends Thread {
+        public int scaleOutCounter = 0;
+        public int scaleInCounter = 0;
 
         public Processor() throws IOException {
             System.err.println("Processor started");
@@ -57,16 +61,28 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
 
         public void run() {
             RequestWithTimestamp rwt;
-            while (true) {
+            while (!join) {
                 try {
                     // get a request
                     rwt = master.deQueue();
                     if (rwt != null) {
                         if (!rwt.r.isPurchase) {
-                            System.err.println("Processing with cache, the elapsed time is " + (System.currentTimeMillis() - rwt.millis));
+                            long requestAge = (System.currentTimeMillis() - rwt.millis);
+//                            if (requestAge > 300) {
+//                                scaleOutCounter++;
+//                                if (scaleOutCounter > 10) {
+//                                    master.addMiddle();
+//                                    scaleOutCounter = 0;
+//                                }
+//                            } else {
+//                                scaleOutCounter = 0;
+//                            }
+                            System.err.println("Processing with cache, the elapsed time is " + requestAge);
                             SL.processRequest(rwt.r, cache);
+
                         } else {
-                            System.err.println("Processing with database, the elapsed time is " + + (System.currentTimeMillis() - rwt.millis));
+                            long requestAge = (System.currentTimeMillis() - rwt.millis);
+                            System.err.println("Processing with database, the elapsed time is " + requestAge);
                             SL.processRequest(rwt.r);
                         }
                     } else {
@@ -81,6 +97,7 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
 
     public void suicide() {
         SL.shutDown();
+        join = true;
         System.err.println("Shutting myself down");
         try {
             UnicastRemoteObject.unexportObject(this, true);

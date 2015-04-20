@@ -8,12 +8,13 @@ public class Master extends UnicastRemoteObject implements IMaster{
 
     public static final int MANAGER_COOLDOWN = 100;
     public static final int MAX_MIDDLE_VM_NUM = 13;
-    public static final int MAX_FRONT_VM_NUM = 1;
-    public static final int INITIAL_DROP_PERIOD = 4500;
-    public static final int SCALE_IN_MIDDLE_THRESHOLD = 100;
-    public static final int SCALE_IN_FRONT_THRESHOLD = 100;
-    public static final long PURCHASE_REQUEST_TIMEOUT = 1300;
-    public static final long REGULAR_REQUEST_TIMEOUT = 300;
+    public static final int MAX_FRONT_VM_NUM = 2;
+    public static final int INITIAL_DROP_PERIOD = 5000;
+    public static final int SCALE_IN_MIDDLE_THRESHOLD = 3000000;
+    public static final long PURCHASE_REQUEST_TIMEOUT = 1400;
+    public static final long REGULAR_REQUEST_TIMEOUT = 400;
+    public static final float scaleOutMiddleFactor = 0.8f;
+    public static long startTime = 0;
 
     public static Cloud.DatabaseOps cache;
     public static String ip;
@@ -34,6 +35,7 @@ public class Master extends UnicastRemoteObject implements IMaster{
     // bind in constructor
     public Master(String ip, int port, ServerLib SL) throws RemoteException{
 
+        setStartTime();
         this.ip = ip;
         this.port = port;
         this.SL = SL;
@@ -49,6 +51,7 @@ public class Master extends UnicastRemoteObject implements IMaster{
         middleList = new LinkedList<String>();
         frontList = new LinkedList<String>();
 
+
         try {
             Naming.bind(String.format("//%s:%d/Master", ip, port), this);
         } catch (AlreadyBoundException e) {
@@ -60,6 +63,9 @@ public class Master extends UnicastRemoteObject implements IMaster{
         }
     }
 
+    public void setStartTime() {
+        startTime = System.currentTimeMillis();
+    }
     // enqueue
     public synchronized void enQueue(RequestWithTimestamp rwt) {
         requestQueue.add(rwt);
@@ -80,11 +86,11 @@ public class Master extends UnicastRemoteObject implements IMaster{
             if (rwt == null) return null;
             else if (rwt.r.isPurchase && currTime - rwt.millis > PURCHASE_REQUEST_TIMEOUT) {
                 SL.drop(rwt.r);
-                System.err.println("Bad purchase request, drop");
+//                System.err.println("Bad purchase request, drop");
                 continue;
             } else if (!rwt.r.isPurchase && currTime - rwt.millis > REGULAR_REQUEST_TIMEOUT) {
                 SL.drop(rwt.r);
-                System.err.println("Bad regular request, drop");
+//                System.err.println("Bad regular request, drop");
                 continue;
             } else {
                 return rwt;
@@ -100,16 +106,24 @@ public class Master extends UnicastRemoteObject implements IMaster{
         scaleInFront();
     }
 
+    public void addMiddle() {
+        scaleOutMiddle();
+    }
+
+    public void removeMiddle() {
+        scaleInMiddle();
+    }
+
     // get role
     public synchronized Integer getRole(String name) {
 
         int role = roleQueue.poll();
         if (role == 0) {//front
-            System.err.println("getRole::Frontlist: " + frontList);
+//            System.err.println("getRole::Frontlist: " + frontList);
             frontList.add(name);
         } else {
             middleList.add(name);
-            System.err.println("getRole::Middlelist: " + middleList);
+//            System.err.println("getRole::Middlelist: " + middleList);
         }
         return role;
     }
@@ -159,31 +173,24 @@ public class Master extends UnicastRemoteObject implements IMaster{
 
         roleQueue.add(1); // add a role
         SL.startVM(); // start a VM
-        synchronized (numMiddleVM){
-            numMiddleVM++;
-        }
-        System.err.println("Scaling out middle, now the num of middle VM is " + numMiddleVM);
+        numMiddleVM++;
+        System.err.println("Scaling out middle, numMiddleVM is " + numMiddleVM + ", Time is " + (System.currentTimeMillis()-startTime));
     }
 
     public synchronized void scaleOutFront() {
         if (numFrontVM > MAX_FRONT_VM_NUM) return;
         roleQueue.add(0);
         SL.startVM();
-        synchronized (numFrontVM){
-            numFrontVM++;
-        }
-        System.err.println("Scaling out front,  now the num of front VM is " + numFrontVM);
+        numFrontVM++;
+        System.err.println("Scaling out front, numFrontVM is " + numFrontVM + " Time is " + (System.currentTimeMillis()-startTime));
     }
 
     public synchronized void scaleInMiddle() {
         scaleInMiddleCounter = 0;
-        System.err.println("Scaling in middle, now the num of middle VM is " + numMiddleVM);
+        System.err.println("Scaling in middle, numMiddleVM is " + numMiddleVM + " Time is " + (System.currentTimeMillis()-startTime));
         String name = middleList.poll();
-        System.err.println("The middle name is " + name);
         if (name != null) {
-            synchronized (numMiddleVM){
-                numMiddleVM--;
-            }
+            numMiddleVM--;
             try {
                 IMiddle middle = getMiddleInstance(ip, port, name);
                 middle.suicide();
@@ -196,13 +203,10 @@ public class Master extends UnicastRemoteObject implements IMaster{
     public synchronized void scaleInFront() {
 
         scaleInFrontCounter = 0;
-        System.err.println("Scaling in front, now the num of front VM is " + numFrontVM);
+        System.err.println("Scaling in front, numFrontVM is " + numFrontVM + " Time is " + (System.currentTimeMillis()-startTime));
         String name = frontList.poll();
-        System.err.println("The front name is " + name);
         if (name != null) {
-            synchronized (numFrontVM){
-                numFrontVM--;
-            }
+            numFrontVM--;
             try {
                 IFront front = getFrontInstance(ip, port, name);
                 front.suicide();
@@ -224,10 +228,11 @@ public class Master extends UnicastRemoteObject implements IMaster{
                 if (requestQueue.size() > numMiddleVM && numMiddleVM < MAX_MIDDLE_VM_NUM) {
                     // scale out
                     scaleInMiddleCounter = 0;
-
-                    int numToStart = (requestQueue.size() - numMiddleVM);
+                    int numToStart = Math.round((float) (requestQueue.size() - numMiddleVM) * scaleOutMiddleFactor);
+//                    int numToStart = (requestQueue.size() - numMiddleVM) * 2 / 3;
                     System.err.println("need to scaleOutMiddle, the queue size is " + requestQueue.size() +
-                            "; number of VM is " + numMiddleVM +
+                            "; numMiddleVM is " + numMiddleVM +
+                            "; numFrontVM is " + numFrontVM +
                             "; numToStart is " + numToStart);
                     for (int i = 0; i < numToStart; i++) {
                         scaleOutMiddle();
@@ -248,22 +253,6 @@ public class Master extends UnicastRemoteObject implements IMaster{
                 }
                 // judge if scale out front
 
-                /*
-                if (requestQueue.size() > 2 * numVM && frontList.size() < MAX_FRONT_VM_NUM) {
-                    scaleOutFront();
-                    int numToDrop = (requestQueue.size() - numVM);
-                    for (int i = 0; i < numToDrop; i++) {
-                        Cloud.FrontEndOps.Request r;
-                        r = requestQueue.poll().r;
-                        if (r != null) SL.drop(r);
-                    }
-                } else {
-                    scaleInFrontCounter++;
-                    if (scaleInFrontCounter > SCALE_IN_FRONT_THRESHOLD) {
-                        scaleInFront();
-                    }
-                }
-                */
                 try{
                     Thread.sleep(MANAGER_COOLDOWN);
                 }catch(InterruptedException e){
