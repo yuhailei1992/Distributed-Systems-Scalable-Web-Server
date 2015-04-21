@@ -10,7 +10,7 @@ import java.util.concurrent.Exchanger;
 public class Master extends UnicastRemoteObject implements IMaster{
 
     public static final int MANAGER_COOLDOWN = 100;
-    public static final int MAX_MIDDLE_VM_NUM = 12;
+    public static final int MAX_MIDDLE_VM_NUM = 10;
     public static final int MAX_FRONT_VM_NUM = 1;
     public static final int INITIAL_DROP_PERIOD = 5000;
     public static final int SCALE_IN_MIDDLE_THRESHOLD = 50;
