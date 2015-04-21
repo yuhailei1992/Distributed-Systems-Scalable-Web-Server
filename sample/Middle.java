@@ -13,7 +13,7 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
     public static ServerLib SL;
     public static String name;
     public static Cloud.DatabaseOps cache;
-    public static final int MIDDLE_COOLDOWN = 10;
+    public static final int MIDDLE_COOLDOWN = 1;
 
     /**
      * constructor, bind the object to a name
@@ -28,11 +28,8 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
         try {
             Naming.bind(String.format("//%s:%d/%s", ip, port, name), this);
         } catch (AlreadyBoundException e) {
-            e.printStackTrace();
         } catch (RemoteException e) {
-            e.printStackTrace();
         } catch (MalformedURLException e) {
-            e.printStackTrace();
         }
     }
 
@@ -45,7 +42,6 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
             Processor processor = new Processor();
             processor.run();
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -70,10 +66,9 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
                             SL.processRequest(rwt.r);
                         }
                     } else {
-                        Thread.sleep(MIDDLE_COOLDOWN);
+                        //Thread.sleep(MIDDLE_COOLDOWN);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
         }
@@ -85,7 +80,6 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
         try {
             UnicastRemoteObject.unexportObject(this, true);
         } catch (NoSuchObjectException e) {
-            e.printStackTrace();
         }
     }
 

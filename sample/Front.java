@@ -9,8 +9,8 @@ public class Front extends UnicastRemoteObject implements IFront {
     public static IMaster master;
     public static ServerLib SL;
     public static String name;
-    public static final int FRONT_THRESHOLD = 5;
-    public static final int FRONT_COOLDOWN = 10;
+    public static final int FRONT_THRESHOLD = 6;
+    public static final int FRONT_COOLDOWN = 50;
 
     /**
      * constructor, bind the object to a name
@@ -24,17 +24,14 @@ public class Front extends UnicastRemoteObject implements IFront {
         try {
             Naming.bind(String.format("//%s:%d/%s", ip, port, name), this);
         } catch (AlreadyBoundException e) {
-            e.printStackTrace();
         } catch (RemoteException e) {
-            e.printStackTrace();
         } catch (MalformedURLException e) {
-            e.printStackTrace();
         }
     }
 
     /**
      * start a thread of middle
-     * @param SL
+     * @param
      */
     public void startFront() {
         try {
@@ -71,7 +68,6 @@ public class Front extends UnicastRemoteObject implements IFront {
                         Thread.sleep(FRONT_COOLDOWN);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
         }
@@ -84,7 +80,6 @@ public class Front extends UnicastRemoteObject implements IFront {
         try {
             UnicastRemoteObject.unexportObject(this, true);
         } catch (NoSuchObjectException e) {
-            e.printStackTrace();
         }
     }
 

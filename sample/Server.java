@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 
 public class Server {
 
-    public static final int INITIAL_MIDDLE_LAYER = 3;
+    public static final int INITIAL_MIDDLE_LAYER = 2;
     public static final int INITIAL_FRONT_LAYER = 1;
     public static boolean isMaster;
     /**
