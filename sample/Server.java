@@ -42,14 +42,14 @@ public class Server {
         return null;
     }
 
-	public static void main (String args[]) throws Exception {
+    public static void main (String args[]) throws Exception {
 
-		// check parameters
-		if (args.length != 2) throw new Exception("Need 2 args: <cloud_ip> <cloud_port>");
+        // check parameters
+        if (args.length != 2) throw new Exception("Need 2 args: <cloud_ip> <cloud_port>");
         String ip = args[0];
         int port = Integer.parseInt(args[1]);
 
-		ServerLib SL = new ServerLib(ip, port);
+        ServerLib SL = new ServerLib(ip, port);
 
         // judge if master or not
         if (SL.getStatusVM(2) == Cloud.CloudOps.VMStatus.NonExistent) {
@@ -85,7 +85,7 @@ public class Server {
                 front.startFront();
             }
         }
-	}
+    }
 
     public static synchronized String getTimeStamp() {
         // get timestamp
