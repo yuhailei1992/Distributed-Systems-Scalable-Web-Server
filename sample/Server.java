@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 public class Server {
 
     public static int[] INITIAL = {1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 5, 4, 3, 2};
-    public static int[] FRONT =   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0};
+    public static int[] FRONT =   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0};
     public static boolean isMaster;
     /**
      * get the current timestamp as a string

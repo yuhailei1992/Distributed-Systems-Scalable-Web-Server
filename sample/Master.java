@@ -8,7 +8,7 @@ import java.util.concurrent.Exchanger;
 public class Master extends UnicastRemoteObject implements IMaster{
 
     public static final int MANAGER_COOLDOWN = 100;
-    public static final int MAX_MIDDLE_VM_NUM = 11;
+    public static final int MAX_MIDDLE_VM_NUM = 13;
     public static final int MIN_MIDDLE_VM_NUM = 1;
     public static final int MAX_FRONT_VM_NUM = 1;
     public static final int INITIAL_DROP_PERIOD = 5000;
@@ -243,6 +243,7 @@ public class Master extends UnicastRemoteObject implements IMaster{
 
     public synchronized void scaleInMiddle() {
         if (numMiddleVM == MIN_MIDDLE_VM_NUM) return;
+        if (Math.round(SL.getTime()) == 18 && System.currentTimeMillis() - startTime < 50) return;
         scaleInMiddleCounter = 0;
 
         System.err.println("Scaling in middle, numMiddleVM = " + numMiddleVM + " Time is " + (System.currentTimeMillis() - startTime));
