@@ -13,7 +13,9 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
     public static ServerLib SL;
     public static String name;
     public static Cloud.DatabaseOps cache;
-    public static final int MIDDLE_COOLDOWN = 1;
+    public int scaleInCounter;
+    public static final int SCALE_IN_THRESHOLD =6000;
+    public static final int SAMPLING_PERIOD = 7;
 
     /**
      * constructor, bind the object to a name
@@ -23,6 +25,7 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
         cache = Server.getCacheInstance(ip, port);
         this.SL = SL;
         this.name = name;
+        scaleInCounter = 0;
 
         // register at the serverside
         try {
@@ -47,26 +50,48 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
 
     public class Processor extends Thread {
 
+        public long prevTime;
+        public int cnt;
+
         public Processor() throws IOException {
-            System.err.println("Processor started");
+            System.err.println("Middle layer started");
+            prevTime = System.currentTimeMillis();
+            cnt = 0;
         }
 
         public void run() {
             RequestWithTimestamp rwt;
             while (true) {
+
                 try {
                     // get a request
                     rwt = master.deQueue();
+
                     if (rwt != null) {
+
+                        System.err.println("New request, time is " + (System.currentTimeMillis() - prevTime) +
+                        "\t cnt is " + cnt);
+
                         if (!rwt.r.isPurchase) {
-                            System.err.println("Processing with cache, the elapsed time is " + (System.currentTimeMillis() - rwt.millis));
+//                            System.err.println("Processing with cache, the elapsed time is " + (System.currentTimeMillis() - rwt.millis));
                             SL.processRequest(rwt.r, cache);
                         } else {
-                            System.err.println("Processing with database, the elapsed time is " + + (System.currentTimeMillis() - rwt.millis));
+//                            System.err.println("Processing with database, the elapsed time is " + + (System.currentTimeMillis() - rwt.millis));
                             SL.processRequest(rwt.r);
                         }
+
+                        cnt = (cnt + 1) % SAMPLING_PERIOD;
+//
+                        if (cnt == 0) {
+                            if (System.currentTimeMillis() - prevTime > SCALE_IN_THRESHOLD) {
+                                System.err.println("Need to scale in. currtime is " + (System.currentTimeMillis() - prevTime));
+                                master.removeMiddle();
+                            }
+                            prevTime = System.currentTimeMillis();
+                        }
+
                     } else {
-                        //Thread.sleep(MIDDLE_COOLDOWN);
+                        Thread.sleep(50);
                     }
                 } catch (Exception e) {
                 }
@@ -81,6 +106,7 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
             UnicastRemoteObject.unexportObject(this, true);
         } catch (NoSuchObjectException e) {
         }
+        System.exit(1);
     }
 
 }

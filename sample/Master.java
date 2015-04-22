@@ -1,31 +1,25 @@
-import org.omg.CORBA.INITIALIZE;
-
 import java.net.MalformedURLException;
 import java.rmi.*;
 import java.util.*;
 import java.io.IOException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.concurrent.Exchanger;
 
 public class Master extends UnicastRemoteObject implements IMaster{
 
     public static final int MANAGER_COOLDOWN = 100;
-    public static final int MAX_MIDDLE_VM_NUM = 10;
+    public static final int MAX_MIDDLE_VM_NUM = 12;
+    public static final int MIN_MIDDLE_VM_NUM = 1;
     public static final int MAX_FRONT_VM_NUM = 1;
     public static final int INITIAL_DROP_PERIOD = 5000;
-    public static final int SCALE_IN_MIDDLE_THRESHOLD = 50;
-    public static final int SCALE_IN_FRONT_THRESHOLD = 100;
     public static final long PURCHASE_REQUEST_TIMEOUT = 1200;
     public static final long REGULAR_REQUEST_TIMEOUT = 200;
-    public static final int SAMPLING_PERIOD = 5;
-
-    public static int MAX_BATCH_NEW_MACHINE = 5;
-
-    public static float SCALE_OUT_FACTOR = 1.0f;
-
-    public static final int FRONT_THRESHOLD = 5;
+    public static final int SAMPLING_PERIOD = 10;
+    public static float SCALE_OUT_FACTOR = 0.5f;
     public static final int FRONT_COOLDOWN = 10;
 
+    public static long prevScaleInTime;
+
+    public static int[] sampler;
     public static Cloud.DatabaseOps cache;
     public static String ip;
     public static Integer port;
@@ -55,6 +49,8 @@ public class Master extends UnicastRemoteObject implements IMaster{
         scaleInFrontCounter = 0;
         scaleInMiddleCounter = 0;
 
+        sampler = new int[SAMPLING_PERIOD];
+
         cache = new Cache(ip, port);
         requestQueue = new java.util.LinkedList<RequestWithTimestamp>();
         roleQueue = new java.util.LinkedList<Integer>();
@@ -68,76 +64,6 @@ public class Master extends UnicastRemoteObject implements IMaster{
             System.err.println("Already bound");
         } catch (RemoteException e) {
         } catch (MalformedURLException e) {
-        }
-    }
-
-    public void setStartTime() {
-        startTime = System.currentTimeMillis();
-    }
-
-    // enqueue
-    public void enQueue(RequestWithTimestamp rwt) {
-        requestQueue.add(rwt);
-    }
-
-    public boolean needDropFront() {
-        //System.err.println("Called needDropFront, the queue size is " + requestQueue.size() + "; number of VM is " + numVM);
-        return true;
-    }
-
-    // dequeue
-    public RequestWithTimestamp deQueue() {
-        //RequestWithTimestamp rwt = requestQueue.poll();
-        long currTime = System.currentTimeMillis();
-        RequestWithTimestamp rwt;
-        while (true) {
-            rwt = requestQueue.poll();
-            if (rwt == null) return null;
-            else if (rwt.r.isPurchase && currTime - rwt.millis > PURCHASE_REQUEST_TIMEOUT) {
-                SL.drop(rwt.r);
-                continue;
-            } else if (!rwt.r.isPurchase && currTime - rwt.millis > REGULAR_REQUEST_TIMEOUT) {
-                SL.drop(rwt.r);
-                continue;
-            } else {
-                return rwt;
-            }
-        }
-    }
-
-    public void addFront() {
-        scaleOutFront();
-    }
-
-    public void removeFront() {
-        scaleInFront();
-    }
-
-    // get role
-    public Integer getRole(String name) {
-        int role = roleQueue.poll();
-        if (role == 0) {//front
-            frontList.add(name);
-        } else {
-            middleList.add(name);
-        }
-        return role;
-    }
-
-    // start a manager. only valid for master
-    public void startManager() throws IOException{
-        try {
-            Manager manager = new Manager();
-            manager.start();
-        } catch (Exception e) {
-        }
-    }
-
-    public void startFront() throws IOException{
-        try {
-            Front front = new Front();
-            front.start();
-        } catch (Exception e) {
         }
     }
 
@@ -161,10 +87,10 @@ public class Master extends UnicastRemoteObject implements IMaster{
                         requestQueue.add(new RequestWithTimestamp(r));
                     }
 
-                    if (len > FRONT_THRESHOLD) {
-                        System.err.println("Front:: need to scale out. my queue len is " + len);
-                        addFront();
-                    }
+//                    if (len > FRONT_THRESHOLD) {
+//                        System.err.println("Front:: need to scale out. my queue len is " + len);
+//                        addFront();
+//                    }
                 } else {
                     try {
                         Thread.sleep(FRONT_COOLDOWN);
@@ -172,60 +98,6 @@ public class Master extends UnicastRemoteObject implements IMaster{
                         System.err.println("Front: sleep interrupted");
                     }
                 }
-            }
-        }
-    }
-
-    public void scaleOutMiddle() {
-        if (numMiddleVM > MAX_MIDDLE_VM_NUM) return;
-
-        roleQueue.add(1); // add a role
-        SL.startVM(); // start a VM
-        synchronized (numMiddleVM){
-            numMiddleVM++;
-        }
-        System.err.println("Scaling out middle, numMiddleVM = " + numMiddleVM + " Time is " + (System.currentTimeMillis() - startTime));
-    }
-
-    public void scaleOutFront() {
-        if (numFrontVM > MAX_FRONT_VM_NUM) return;
-        roleQueue.add(0);
-        SL.startVM();
-        synchronized (numFrontVM){
-            numFrontVM++;
-        }
-        System.err.println("Scaling out front, numFrontVM = " + numFrontVM + " Time is " + (System.currentTimeMillis() - startTime));
-    }
-
-    public void scaleInMiddle() {
-        scaleInMiddleCounter = 0;
-        System.err.println("Scaling in middle, numMiddleVM = " + numMiddleVM + " Time is " + (System.currentTimeMillis() - startTime));
-        String name = middleList.poll();
-        if (name != null) {
-            synchronized (numMiddleVM){
-                numMiddleVM--;
-            }
-            try {
-                IMiddle middle = getMiddleInstance(ip, port, name);
-                middle.suicide();
-            } catch (Exception e) {
-            }
-        }
-    }
-
-    public void scaleInFront() {
-
-        scaleInFrontCounter = 0;
-        System.err.println("Scaling in front, numFrontVM = " + numFrontVM + " Time is " + (System.currentTimeMillis() - startTime));
-        String name = frontList.poll();
-        if (name != null) {
-            synchronized (numFrontVM){
-                numFrontVM--;
-            }
-            try {
-                IFront front = getFrontInstance(ip, port, name);
-                front.suicide();
-            } catch (Exception e) {
             }
         }
     }
@@ -246,39 +118,31 @@ public class Master extends UnicastRemoteObject implements IMaster{
             while (true) {
                 // judge if scale out middle
                 samplingCounter = (samplingCounter + 1) % SAMPLING_PERIOD;
-                queueLengthSum += requestQueue.size();
-                if (samplingCounter == 4) {
-                    int numToStart = Math.round(((float)queueLengthSum / (float)SAMPLING_PERIOD / (float)numMiddleVM) * 2 * SCALE_OUT_FACTOR);
 
-                    numToStart = Math.max(numToStart, MAX_BATCH_NEW_MACHINE);
+                sampler[samplingCounter] = requestQueue.size();
+                queueLengthSum = 0;
+                for (int i = 0; i < sampler.length; i++){
+                    queueLengthSum += sampler[i];
+                }
 
+                if (samplingCounter == 0) {
+                    //int numToStart = Math.round(((float)queueLengthSum / (float)SAMPLING_PERIOD * 2 * SCALE_OUT_FACTOR));
+                    int numToStart = Math.round(((float)queueLengthSum * SCALE_OUT_FACTOR));
+                    int averageLen = queueLengthSum / SAMPLING_PERIOD;
                     System.err.println("queuelength sum = " + queueLengthSum +
-                            "; numToStart = " + numToStart +
+                            "; avglen = " + averageLen +
                             "; numMiddleVM = " + numMiddleVM +
+                            "; numToStart = " + numToStart +
                             "; requestQueue size = " + requestQueue.size() +
                             "; the time = " + (System.currentTimeMillis() - startTime) +
                             "; SCALE_OUT_FACTOR = " + SCALE_OUT_FACTOR);
-                    queueLengthSum = 0; // clear the sum
-                    //&& ((System.currentTimeMillis() - startTime) > 5000)
-                    if (numToStart > 2 && numMiddleVM < MAX_MIDDLE_VM_NUM) {
-                        System.err.println("Decided to scale up! ");
-                        for (int i = 0; i < numToStart; i++) {
+                    numToStart = Math.min(MAX_MIDDLE_VM_NUM, numToStart);
+                    if (numToStart > numMiddleVM) {
+                        for (; numMiddleVM < numToStart; ) {
                             scaleOutMiddle();
                         }
-
-//                        SCALE_OUT_FACTOR *= 0.95;
-
-                        try {
-                            Thread.sleep(5000);
-                        } catch (Exception e) {
-                        }
-                    } else {
-                        scaleInMiddleCounter++;
-                        if (scaleInMiddleCounter > SCALE_IN_MIDDLE_THRESHOLD) {
-                            scaleInMiddle();
-                            scaleInMiddleCounter = 0;
-                        }
                     }
+                    //queueLengthSum = 0;
                 }
 
                 try{
@@ -318,4 +182,163 @@ public class Master extends UnicastRemoteObject implements IMaster{
         return null;
     }
 
+
+    public void scaleOutMiddle() {
+        if (numMiddleVM >= MAX_MIDDLE_VM_NUM) return;
+        synchronized (roleQueue) {
+            roleQueue.add(1); // add a role
+        }
+        SL.startVM(); // start a VM
+        synchronized (numMiddleVM){
+            numMiddleVM++;
+        }
+        System.err.println("Scaling out middle, numMiddleVM = " + numMiddleVM + " Time is " + (System.currentTimeMillis() - startTime));
+    }
+
+    public synchronized void scaleOutFront() {
+        if (numFrontVM >= MAX_FRONT_VM_NUM) return;
+        roleQueue.add(0);
+        SL.startVM();
+        synchronized (numFrontVM){
+            numFrontVM++;
+        }
+        System.err.println("Scaling out front, numFrontVM = " + numFrontVM + " Time is " + (System.currentTimeMillis() - startTime));
+    }
+
+    public synchronized void scaleInMiddle() {
+        if (numMiddleVM == MIN_MIDDLE_VM_NUM) return;
+        scaleInMiddleCounter = 0;
+
+        System.err.println("Scaling in middle, numMiddleVM = " + numMiddleVM + " Time is " + (System.currentTimeMillis() - startTime));
+//        String name = middleList.poll();
+        String name = null;
+        try {
+            name = middleList.removeFirst();
+        } catch (Exception e){
+            System.err.println("Cannot find middle name");
+        }
+//        String name = middleList.removeFirst();
+        if (name != null) {
+            synchronized (numMiddleVM){
+                numMiddleVM--;
+            }
+            try {
+                IMiddle middle = getMiddleInstance(ip, port, name);
+                middle.suicide();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public synchronized void scaleInFront() {
+
+        scaleInFrontCounter = 0;
+        System.err.println("Scaling in front, numFrontVM = " + numFrontVM + " Time is " + (System.currentTimeMillis() - startTime));
+        //String name = frontList.poll();
+        String name = null;
+        try {
+            name = frontList.removeFirst();
+        } catch (Exception e){}
+        if (name != null) {
+            synchronized (numFrontVM){
+                numFrontVM--;
+            }
+            try {
+                IFront front = getFrontInstance(ip, port, name);
+                front.suicide();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+
+    public synchronized void removeMiddle() {
+        if (System.currentTimeMillis() - prevScaleInTime > 5000) {
+            scaleInMiddle();
+            prevScaleInTime = System.currentTimeMillis();
+        }
+    }
+
+    public void addFront() {
+        scaleOutFront();
+    }
+
+    public void removeFront() {
+        scaleInFront();
+    }
+
+    // get role
+    public Integer getRole(String name) {
+        //int role = roleQueue.poll();
+        int role = 0;
+        synchronized (roleQueue) {
+            role = roleQueue.removeFirst();
+        }
+        if (role == 0) {//front
+            System.err.println("getRole: front " + name);
+            synchronized (frontList) {
+                frontList.add(name);
+            }
+        } else {
+            System.err.println("getRole: middle" + name);
+            synchronized (middleList) {
+                middleList.add(name);
+            }
+        }
+        return role;
+    }
+
+    // start a manager. only valid for master
+    public void startManager() throws IOException{
+        try {
+            Manager manager = new Manager();
+            manager.start();
+            // start some middle and front
+        } catch (Exception e) {
+        }
+    }
+
+    public void startFront() {
+        try {
+            Front front = new Front();
+            front.start();
+        } catch (Exception e) {
+        }
+    }
+
+    public void setStartTime() {
+        startTime = System.currentTimeMillis();
+    }
+
+    // enqueue
+    public void enQueue(RequestWithTimestamp rwt) {
+        synchronized(requestQueue) {
+            requestQueue.add(rwt);
+        }
+
+    }
+
+    // dequeue
+    public RequestWithTimestamp deQueue() {
+        //RequestWithTimestamp rwt = requestQueue.poll();
+        long currTime = System.currentTimeMillis();
+        RequestWithTimestamp rwt;
+        while (true) {
+            //rwt = requestQueue.poll();
+            synchronized(requestQueue) {
+                rwt = requestQueue.removeFirst();
+            }
+
+            if (rwt == null) return null;
+            else if (rwt.r.isPurchase && currTime - rwt.millis > PURCHASE_REQUEST_TIMEOUT) {
+                SL.drop(rwt.r);
+                continue;
+            } else if (!rwt.r.isPurchase && currTime - rwt.millis > REGULAR_REQUEST_TIMEOUT) {
+                SL.drop(rwt.r);
+                continue;
+            } else {
+                return rwt;
+            }
+        }
+    }
 }

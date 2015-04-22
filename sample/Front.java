@@ -1,6 +1,5 @@
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.rmi.*;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -9,12 +8,10 @@ public class Front extends UnicastRemoteObject implements IFront {
     public static IMaster master;
     public static ServerLib SL;
     public static String name;
-    public static final int FRONT_THRESHOLD = 6;
+    public static final int FRONT_THRESHOLD = 7;
     public static final int FRONT_COOLDOWN = 50;
+    public static final int SCALE_IN_THRESHOLD = 1000;
 
-    /**
-     * constructor, bind the object to a name
-     */
     public Front(String ip, int port, ServerLib SL, String name) throws RemoteException{
         master = Server.getMasterInstance(ip, port);
         this.SL = SL;
@@ -23,9 +20,7 @@ public class Front extends UnicastRemoteObject implements IFront {
         System.err.println("Frontend: Done getRole");
         try {
             Naming.bind(String.format("//%s:%d/%s", ip, port, name), this);
-        } catch (AlreadyBoundException e) {
-        } catch (RemoteException e) {
-        } catch (MalformedURLException e) {
+        } catch (Exception e) {
         }
     }
 
@@ -43,6 +38,7 @@ public class Front extends UnicastRemoteObject implements IFront {
     }
 
     public class FrontProcessor extends Thread {
+        public int scaleInCounter;
 
         public FrontProcessor() throws IOException {
             System.err.println("Frontend Processor started");
@@ -52,6 +48,7 @@ public class Front extends UnicastRemoteObject implements IFront {
             System.err.println("Front end has started");
 
             SL.register_frontend();
+            scaleInCounter = 0;
 
             while (true) { // get a request, add it to the queue
                 try {
@@ -65,7 +62,13 @@ public class Front extends UnicastRemoteObject implements IFront {
                             master.addFront();
                         }
                     } else {
+//                        scaleInCounter++;
+//                        if (scaleInCounter > SCALE_IN_THRESHOLD) {
+//                            master.removeFront();
+//                            scaleInCounter = 0;
+//                        }
                         Thread.sleep(FRONT_COOLDOWN);
+
                     }
                 } catch (Exception e) {
                 }

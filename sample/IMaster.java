@@ -8,9 +8,10 @@ public interface IMaster extends Remote {
 
     public RequestWithTimestamp deQueue() throws RemoteException;
 
-    public boolean needDropFront() throws RemoteException;
-
     public void addFront() throws RemoteException;
+
     public void removeFront() throws RemoteException;
+
+    public void removeMiddle() throws RemoteException;
 
 }
