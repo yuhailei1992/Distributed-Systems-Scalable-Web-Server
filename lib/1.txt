@@ -8,8 +8,6 @@ VM 0 Running
 VM 2 Booting
 VM 3 Booting
 VM 4 Booting
-VM 5 Booting
-VM 6 Booting
 Time 841
 client 0 started
 client 0 browse TOPLEVEL
@@ -20,46 +18,44 @@ client 1 started
 client 1 browse TOPLEVEL
 client 1 got reply 
 client 1 ended, status: dropped
-Time 2523
+Time 2521
 client 2 started
 client 2 browse TOPLEVEL
 client 2 got reply 
 client 2 ended, status: dropped
-Time 3363
+Time 3359
 client 3 started
 client 3 browse TOPLEVEL
 client 3 got reply 
 client 3 ended, status: dropped
-Time 4203
+Time 4197
 client 4 started
 client 4 browse TOPLEVEL
 client 4 got reply 
 client 4 ended, status: dropped
-Time 5039
+Time 5036
 client 5 started
 client 5 browse TOPLEVEL
 client 5 got reply 
 client 5 ended, status: dropped
-VM 6 Running
-VM 4 Running
-VM 5 Running
-VM 2 Running
 VM 3 Running
-Time 5875
+VM 2 Running
+VM 4 Running
+Time 5876
 client 6 started
 client 6 browse TOPLEVEL
 client 6 got reply Jewelry, Electronics, Office Supplies, Pets
-Time 6713
+Time 6716
 client 7 started
 client 7 browse TOPLEVEL
 client 7 got reply Jewelry, Electronics, Office Supplies, Pets
-Time 7553
+Time 7556
 client 8 started
 client 8 browse TOPLEVEL
 client 8 got reply Jewelry, Electronics, Office Supplies, Pets
 client 7 browse  Electronics
 client 7 got reply iPad, iPhone, Android Devices, bluetooth headset
-Time 8393
+Time 8394
 client 9 started
 client 9 browse TOPLEVEL
 client 6 browse Jewelry
@@ -67,39 +63,39 @@ client 9 got reply Jewelry, Electronics, Office Supplies, Pets
 client 9 ended, status: ok
 client 6 got reply Ring, Necklace, Earring, Bracelet
 client 8 browse  Office Supplies
-Time 9232
+Time 9230
 client 10 started
 client 10 browse TOPLEVEL
 client 8 got reply Writing Instruments, Stationary
 client 10 got reply Jewelry, Electronics, Office Supplies, Pets
 client 7 browse  iPhone
+client 6 browse  Necklace
 Time 10070
 client 11 started
 client 11 browse TOPLEVEL
-client 6 browse  Necklace
 client 7 got reply ITEM,600.0,10
 client 8 browse Writing Instruments
 client 11 got reply Jewelry, Electronics, Office Supplies, Pets
 client 6 got reply Teardrop London Blue Topaz Necklace, Sterling Silver Blue Topaz & Diamond Necklace, Sky Blue Topaz & Diamond Necklace, Faceted Heart Shaped Blue Topaz Necklace, Aquamarine Pendant Necklace, Diamond Leaf Pendant Necklace, Diamond Heart Necklace, Freshwater Pearl Necklace
 client 8 got reply pen, No. 2 pencil, typewriter
-Time 10907
+Time 10909
 client 12 started
 client 12 browse TOPLEVEL
 client 12 got reply Jewelry, Electronics, Office Supplies, Pets
-client 10 browse  Pets
 client 6 browse  Diamond Leaf Pendant Necklace
+client 10 browse  Pets
 client 7 purchase  iPhone
-Time 11746
+Time 11747
 client 13 started
 client 13 browse TOPLEVEL
 client 10 got reply goldfish, alpaca, ant farm, bird, cat, dog, ferret, fish, frog, gecko, gerbil, goat, guinea pig, hamster, hedgehog, hermit crab, horse, iguana, mantis, mouse, newt, pig, rabbit, rat, salamander, sheep, snake, spider, stick bug, turtle
-client 8 browse pen
 client 6 got reply ITEM,882.18,1363
+client 8 browse pen
 client 13 got reply Jewelry, Electronics, Office Supplies, Pets
 client 7 ended, status: purchased
 client 8 got reply ITEM,1.25,1000
 client 11 browse Jewelry
-Time 12583
+Time 12587
 client 14 started
 client 14 browse TOPLEVEL
 client 12 browse  Electronics
@@ -107,475 +103,401 @@ client 14 got reply Jewelry, Electronics, Office Supplies, Pets
 client 14 ended, status: ok
 client 11 got reply Ring, Necklace, Earring, Bracelet
 client 12 got reply iPad, iPhone, Android Devices, bluetooth headset
-Time 13423
+Time 13426
 client 15 started
 client 15 browse TOPLEVEL
 client 10 browse  frog
-client 13 browse  Office Supplies
 client 15 got reply Jewelry, Electronics, Office Supplies, Pets
+client 13 browse  Office Supplies
 client 13 got reply Writing Instruments, Stationary
 client 8 purchase pen
-client 10 got reply ITEM,200.28,2054
 client 6 purchase  Diamond Leaf Pendant Necklace
-Time 14262
+client 10 got reply ITEM,200.28,2054
+Time 14263
 client 16 started
 client 16 browse TOPLEVEL
+client 6 ended, status: purchased
+client 12 browse  iPhone
 client 8 ended, status: purchased
 client 16 got reply Jewelry, Electronics, Office Supplies, Pets
-client 12 browse  iPhone
-client 6 ended, status: purchased
 client 12 got reply ITEM,600.0,10
-client 11 browse  Necklace
-Time 15100
+Time 15101
 client 17 started
 client 17 browse TOPLEVEL
+client 11 browse  Necklace
 client 10 purchase  frog
 client 11 got reply Teardrop London Blue Topaz Necklace, Sterling Silver Blue Topaz & Diamond Necklace, Sky Blue Topaz & Diamond Necklace, Faceted Heart Shaped Blue Topaz Necklace, Aquamarine Pendant Necklace, Diamond Leaf Pendant Necklace, Diamond Heart Necklace, Freshwater Pearl Necklace
 client 17 got reply Jewelry, Electronics, Office Supplies, Pets
 client 10 ended, status: purchased
 client 13 browse Writing Instruments
-client 16 browse  Electronics
 client 15 browse Jewelry
-Time 15940
+Time 15937
 client 18 started
 client 18 browse TOPLEVEL
 client 12 purchase  iPhone
+client 16 browse  Electronics
 client 13 got reply pen, No. 2 pencil, typewriter
-client 16 got reply iPad, iPhone, Android Devices, bluetooth headset
 client 15 got reply Ring, Necklace, Earring, Bracelet
 client 15 ended, status: ok
 client 18 got reply Jewelry, Electronics, Office Supplies, Pets
+client 16 got reply iPad, iPhone, Android Devices, bluetooth headset
 client 12 ended, status: purchased
-Time 16781
+Time 16776
 client 19 started
 client 19 browse TOPLEVEL
 client 19 got reply Jewelry, Electronics, Office Supplies, Pets
-client 16 browse  iPhone
-client 18 browse  Pets
 client 17 browse  Office Supplies
+client 18 browse  Pets
 client 13 browse  typewriter
-client 16 got reply ITEM,600.0,10
-client 16 ended, status: ok
-client 18 got reply goldfish, alpaca, ant farm, bird, cat, dog, ferret, fish, frog, gecko, gerbil, goat, guinea pig, hamster, hedgehog, hermit crab, horse, iguana, mantis, mouse, newt, pig, rabbit, rat, salamander, sheep, snake, spider, stick bug, turtle
 client 11 browse  Sterling Silver Blue Topaz & Diamond Necklace
 client 17 got reply Writing Instruments, Stationary
-Time 17619
+Time 17612
 client 20 started
 client 20 browse TOPLEVEL
+client 16 browse  iPhone
+client 18 got reply goldfish, alpaca, ant farm, bird, cat, dog, ferret, fish, frog, gecko, gerbil, goat, guinea pig, hamster, hedgehog, hermit crab, horse, iguana, mantis, mouse, newt, pig, rabbit, rat, salamander, sheep, snake, spider, stick bug, turtle
 client 20 got reply Jewelry, Electronics, Office Supplies, Pets
 client 13 got reply ITEM,150.0,5
+client 16 got reply ITEM,600.0,10
+client 16 ended, status: ok
 client 11 got reply ITEM,535.97,3792
 client 19 browse Jewelry
-Time 18459
+Time 18452
 client 21 started
 client 21 browse TOPLEVEL
 client 19 got reply Ring, Necklace, Earring, Bracelet
 client 21 got reply Jewelry, Electronics, Office Supplies, Pets
 client 18 browse  horse
 client 20 browse  Office Supplies
-client 18 got reply ITEM,9991.67,3889
-Time 19296
+Time 19290
 client 22 started
 client 22 browse TOPLEVEL
+client 18 got reply ITEM,9991.67,3889
 client 20 got reply Writing Instruments, Stationary
-client 22 got reply Jewelry, Electronics, Office Supplies, Pets
 client 19 browse  Necklace
+client 22 got reply Jewelry, Electronics, Office Supplies, Pets
 client 17 browse Writing Instruments
-client 11 purchase  Sterling Silver Blue Topaz & Diamond Necklace
 client 19 got reply Teardrop London Blue Topaz Necklace, Sterling Silver Blue Topaz & Diamond Necklace, Sky Blue Topaz & Diamond Necklace, Faceted Heart Shaped Blue Topaz Necklace, Aquamarine Pendant Necklace, Diamond Leaf Pendant Necklace, Diamond Heart Necklace, Freshwater Pearl Necklace
-client 17 got reply pen, No. 2 pencil, typewriter
 client 21 browse  Pets
-Time 20135
+client 17 got reply pen, No. 2 pencil, typewriter
+Time 20130
 client 23 started
 client 23 browse TOPLEVEL
 client 13 purchase  typewriter
-client 18 purchase  horse
+client 11 purchase  Sterling Silver Blue Topaz & Diamond Necklace
 client 21 got reply goldfish, alpaca, ant farm, bird, cat, dog, ferret, fish, frog, gecko, gerbil, goat, guinea pig, hamster, hedgehog, hermit crab, horse, iguana, mantis, mouse, newt, pig, rabbit, rat, salamander, sheep, snake, spider, stick bug, turtle
 client 23 got reply Jewelry, Electronics, Office Supplies, Pets
-client 11 ended, status: purchased
+client 18 purchase  horse
 client 22 browse Jewelry
 client 13 ended, status: purchased
 client 20 browse Writing Instruments
-client 22 got reply Ring, Necklace, Earring, Bracelet
-client 18 ended, status: purchased
-Time 20973
+Time 20970
 client 24 started
 client 24 browse TOPLEVEL
 client 19 browse  Sterling Silver Blue Topaz & Diamond Necklace
+client 11 ended, status: purchased
+client 22 got reply Ring, Necklace, Earring, Bracelet
+client 18 ended, status: purchased
+client 17 browse  typewriter
+client 23 browse  Electronics
 client 20 got reply pen, No. 2 pencil, typewriter
 client 24 got reply Jewelry, Electronics, Office Supplies, Pets
 client 19 got reply ITEM,535.97,3792
-client 17 browse  typewriter
-client 23 browse  Electronics
 client 17 got reply ITEM,150.0,5
 client 17 ended, status: ok
-client 23 got reply iPad, iPhone, Android Devices, bluetooth headset
-Time 21813
+Time 21809
 client 25 started
 client 25 browse TOPLEVEL
-client 22 browse  Necklace
+client 23 got reply iPad, iPhone, Android Devices, bluetooth headset
 client 25 got reply Jewelry, Electronics, Office Supplies, Pets
+client 22 browse  Necklace
 client 22 got reply Teardrop London Blue Topaz Necklace, Sterling Silver Blue Topaz & Diamond Necklace, Sky Blue Topaz & Diamond Necklace, Faceted Heart Shaped Blue Topaz Necklace, Aquamarine Pendant Necklace, Diamond Leaf Pendant Necklace, Diamond Heart Necklace, Freshwater Pearl Necklace
 client 21 browse  cat
-Time 22653
+Time 22647
 client 26 started
 client 26 browse TOPLEVEL
-client 19 purchase  Sterling Silver Blue Topaz & Diamond Necklace
 client 26 got reply Jewelry, Electronics, Office Supplies, Pets
 client 21 got reply ITEM,42.01,868
-client 20 browse  typewriter
+client 19 purchase  Sterling Silver Blue Topaz & Diamond Necklace
 client 23 browse  iPhone
-client 19 ended, status: purchased
-client 24 browse  Office Supplies
-Time 23493
+Time 23486
 client 27 started
 client 27 browse TOPLEVEL
-client 20 got reply ITEM,150.0,5
-client 20 ended, status: ok
-client 23 got reply ITEM,600.0,10
+client 20 browse  typewriter
+client 24 browse  Office Supplies
 client 25 browse  Pets
-client 22 browse  Sterling Silver Blue Topaz & Diamond Necklace
+client 19 ended, status: purchased
 client 27 got reply Jewelry, Electronics, Office Supplies, Pets
 client 27 ended, status: ok
+client 23 got reply ITEM,600.0,10
 client 24 got reply Writing Instruments, Stationary
+client 22 browse  Sterling Silver Blue Topaz & Diamond Necklace
+client 20 got reply ITEM,150.0,5
+client 20 ended, status: ok
 client 25 got reply goldfish, alpaca, ant farm, bird, cat, dog, ferret, fish, frog, gecko, gerbil, goat, guinea pig, hamster, hedgehog, hermit crab, horse, iguana, mantis, mouse, newt, pig, rabbit, rat, salamander, sheep, snake, spider, stick bug, turtle
-client 22 got reply ITEM,535.97,3792
-client 21 purchase  cat
-Time 24329
+Time 24325
 client 28 started
 client 28 browse TOPLEVEL
+client 21 purchase  cat
+client 22 got reply ITEM,535.97,3792
 client 28 got reply Jewelry, Electronics, Office Supplies, Pets
-client 26 browse Jewelry
 client 21 ended, status: purchased
-client 22 purchase  Sterling Silver Blue Topaz & Diamond Necklace
-client 26 got reply Ring, Necklace, Earring, Bracelet
-Time 25170
+client 26 browse Jewelry
+Time 25162
 client 29 started
 client 29 browse TOPLEVEL
-client 25 browse  ferret
+client 26 got reply Ring, Necklace, Earring, Bracelet
+client 22 purchase  Sterling Silver Blue Topaz & Diamond Necklace
 client 29 got reply Jewelry, Electronics, Office Supplies, Pets
-client 22 ended, status: purchased
+client 25 browse  ferret
 client 23 purchase  iPhone
 client 24 browse Writing Instruments
-client 25 got reply ITEM,189.97,1116
-client 24 got reply pen, No. 2 pencil, typewriter
-Time 26008
+client 22 ended, status: purchased
+Time 26000
 client 30 started
 client 30 browse TOPLEVEL
+client 25 got reply ITEM,189.97,1116
+client 24 got reply pen, No. 2 pencil, typewriter
 client 23 ended, status: purchased
-client 30 got reply Jewelry, Electronics, Office Supplies, Pets
 client 29 browse  Pets
+client 30 got reply Jewelry, Electronics, Office Supplies, Pets
 client 28 browse  Office Supplies
-client 25 purchase  ferret
 client 29 got reply goldfish, alpaca, ant farm, bird, cat, dog, ferret, fish, frog, gecko, gerbil, goat, guinea pig, hamster, hedgehog, hermit crab, horse, iguana, mantis, mouse, newt, pig, rabbit, rat, salamander, sheep, snake, spider, stick bug, turtle
 client 28 got reply Writing Instruments, Stationary
 client 28 ended, status: ok
-Time 26849
+Time 26840
 client 31 started
 client 31 browse TOPLEVEL
-client 24 browse  No. 2 pencil
+client 25 purchase  ferret
 client 31 got reply Jewelry, Electronics, Office Supplies, Pets
-client 25 ended, status: purchased
+client 24 browse  No. 2 pencil
 client 26 browse  Necklace
-client 24 got reply ITEM,0.2,10000
-client 26 got reply Teardrop London Blue Topaz Necklace, Sterling Silver Blue Topaz & Diamond Necklace, Sky Blue Topaz & Diamond Necklace, Faceted Heart Shaped Blue Topaz Necklace, Aquamarine Pendant Necklace, Diamond Leaf Pendant Necklace, Diamond Heart Necklace, Freshwater Pearl Necklace
-Time 27689
+client 25 ended, status: purchased
+Time 27679
 client 32 started
 client 32 browse TOPLEVEL
+client 24 got reply ITEM,0.2,10000
+client 26 got reply Teardrop London Blue Topaz Necklace, Sterling Silver Blue Topaz & Diamond Necklace, Sky Blue Topaz & Diamond Necklace, Faceted Heart Shaped Blue Topaz Necklace, Aquamarine Pendant Necklace, Diamond Leaf Pendant Necklace, Diamond Heart Necklace, Freshwater Pearl Necklace
 client 32 got reply Jewelry, Electronics, Office Supplies, Pets
 client 32 ended, status: ok
-client 30 browse  Electronics
-Time 28530
+Time 28518
 client 33 started
 client 33 browse TOPLEVEL
 client 29 browse  frog
-client 30 got reply iPad, iPhone, Android Devices, bluetooth headset
+client 30 browse  Electronics
 client 33 got reply Jewelry, Electronics, Office Supplies, Pets
 client 29 got reply ITEM,200.28,2054
 client 29 ended, status: ok
 client 31 browse  Office Supplies
-Time 29369
+client 30 got reply iPad, iPhone, Android Devices, bluetooth headset
+client 31 got reply Writing Instruments, Stationary
+Time 29358
 client 34 started
 client 34 browse TOPLEVEL
-client 31 got reply Writing Instruments, Stationary
-client 24 purchase  No. 2 pencil
 client 34 got reply Jewelry, Electronics, Office Supplies, Pets
+client 24 purchase  No. 2 pencil
 client 26 browse  Diamond Leaf Pendant Necklace
 client 33 browse Jewelry
-client 24 ended, status: purchased
-client 26 got reply ITEM,882.18,1363
-Time 30206
+Time 30196
 client 35 started
 client 35 browse TOPLEVEL
 client 33 got reply Ring, Necklace, Earring, Bracelet
 client 33 ended, status: ok
+client 24 ended, status: purchased
+client 26 got reply ITEM,882.18,1363
 client 35 got reply Jewelry, Electronics, Office Supplies, Pets
+VM 2 Ended
 client 30 browse  iPhone
-client 30 got reply ITEM,600.0,10
 client 34 browse  Electronics
-Time 31044
+Time 31033
 client 36 started
 client 36 browse TOPLEVEL
-client 26 purchase  Diamond Leaf Pendant Necklace
 client 31 browse Writing Instruments
-client 34 got reply iPad, iPhone, Android Devices, bluetooth headset
+client 30 got reply ITEM,600.0,10
 client 36 got reply Jewelry, Electronics, Office Supplies, Pets
+client 26 purchase  Diamond Leaf Pendant Necklace
+client 34 got reply iPad, iPhone, Android Devices, bluetooth headset
 client 31 got reply pen, No. 2 pencil, typewriter
-client 26 ended, status: purchased
-Time 31883
+Time 31871
 client 37 started
 client 37 browse TOPLEVEL
-client 37 got reply Jewelry, Electronics, Office Supplies, Pets
+client 26 ended, status: purchased
 client 36 browse  Pets
-client 36 got reply goldfish, alpaca, ant farm, bird, cat, dog, ferret, fish, frog, gecko, gerbil, goat, guinea pig, hamster, hedgehog, hermit crab, horse, iguana, mantis, mouse, newt, pig, rabbit, rat, salamander, sheep, snake, spider, stick bug, turtle
-client 34 browse  iPhone
-client 35 browse  Office Supplies
-Time 32723
+client 37 got reply Jewelry, Electronics, Office Supplies, Pets
+Time 32711
 client 38 started
 client 38 browse TOPLEVEL
+client 36 got reply goldfish, alpaca, ant farm, bird, cat, dog, ferret, fish, frog, gecko, gerbil, goat, guinea pig, hamster, hedgehog, hermit crab, horse, iguana, mantis, mouse, newt, pig, rabbit, rat, salamander, sheep, snake, spider, stick bug, turtle
+client 34 browse  iPhone
+client 38 got reply Jewelry, Electronics, Office Supplies, Pets
+client 35 browse  Office Supplies
 client 30 purchase  iPhone
 client 34 got reply ITEM,600.0,10
 client 34 ended, status: ok
 client 35 got reply Writing Instruments, Stationary
-client 38 got reply Jewelry, Electronics, Office Supplies, Pets
 client 31 browse  typewriter
-client 30 ended, status: purchased
-client 31 got reply ITEM,150.0,5
-Time 33563
+Time 33550
 client 39 started
 client 39 browse TOPLEVEL
-VM 4 Ended
-client 39 got reply Jewelry, Electronics, Office Supplies, Pets
+client 30 ended, status: purchased
 client 36 browse  snake
-client 37 browse Jewelry
-VM 3 Ended
-client 35 browse Writing Instruments
-Time 34403
+client 31 got reply ITEM,150.0,5
+client 39 got reply Jewelry, Electronics, Office Supplies, Pets
+Time 34391
 client 40 started
 client 40 browse TOPLEVEL
-VM 5 Ended
-client 35 got reply pen, No. 2 pencil, typewriter
-client 39 browse  Office Supplies
+client 37 browse Jewelry
+client 36 got reply ITEM,155.99,4452
+client 35 browse Writing Instruments
 client 40 got reply Jewelry, Electronics, Office Supplies, Pets
 client 38 browse  Electronics
-client 39 got reply Writing Instruments, Stationary
-Time 35243
+client 37 got reply Ring, Necklace, Earring, Bracelet
+Time 35230
 client 41 started
 client 41 browse TOPLEVEL
+client 39 browse  Office Supplies
+client 35 got reply pen, No. 2 pencil, typewriter
 client 38 got reply iPad, iPhone, Android Devices, bluetooth headset
-client 31 purchase  typewriter
 client 41 got reply Jewelry, Electronics, Office Supplies, Pets
-client 31 ended, status: purchased
-Time 36083
+client 39 got reply Writing Instruments, Stationary
+client 31 purchase  typewriter
+Time 36071
 client 42 started
 client 42 browse TOPLEVEL
 client 40 browse Jewelry
+client 31 ended, status: purchased
+client 36 purchase  snake
+client 37 browse  Necklace
 client 42 got reply Jewelry, Electronics, Office Supplies, Pets
-client 39 browse Writing Instruments
-client 35 browse pen
-client 40 got reply Ring, Necklace, Earring, Bracelet
-client 39 got reply pen, No. 2 pencil, typewriter
-Time 36923
+Time 36910
 client 43 started
 client 43 browse TOPLEVEL
-client 35 got reply ITEM,1.25,1000
-client 35 ended, status: ok
-client 43 got reply Jewelry, Electronics, Office Supplies, Pets
-client 42 browse  Office Supplies
+client 40 got reply Ring, Necklace, Earring, Bracelet
+client 35 browse pen
+client 39 browse Writing Instruments
+client 36 ended, status: purchased
+client 37 got reply Teardrop London Blue Topaz Necklace, Sterling Silver Blue Topaz & Diamond Necklace, Sky Blue Topaz & Diamond Necklace, Faceted Heart Shaped Blue Topaz Necklace, Aquamarine Pendant Necklace, Diamond Leaf Pendant Necklace, Diamond Heart Necklace, Freshwater Pearl Necklace
 client 41 browse  Electronics
+client 42 browse  Office Supplies
 client 38 browse  iPhone
-client 42 got reply Writing Instruments, Stationary
-Time 37762
+Time 37750
 client 44 started
 client 44 browse TOPLEVEL
-client 39 browse  No. 2 pencil
+client 43 got reply Jewelry, Electronics, Office Supplies, Pets
+client 35 got reply ITEM,1.25,1000
+client 35 ended, status: ok
+client 39 got reply 
+client 39 ended, status: dropped
 client 41 got reply iPad, iPhone, Android Devices, bluetooth headset
 client 40 browse  Necklace
-client 38 got reply ITEM,600.0,10
-VM 7 Booting
-VM 8 Booting
-VM 9 Booting
-client 44 got reply Jewelry, Electronics, Office Supplies, Pets
-client 39 got reply ITEM,0.2,10000
-client 43 browse  Pets
-Time 38599
+client 42 got reply Writing Instruments, Stationary
+client 38 got reply 
+client 38 ended, status: dropped
+client 37 browse  Diamond Leaf Pendant Necklace
+Time 38590
 client 45 started
 client 45 browse TOPLEVEL
+client 44 got reply Jewelry, Electronics, Office Supplies, Pets
+VM 5 Booting
 client 40 got reply Teardrop London Blue Topaz Necklace, Sterling Silver Blue Topaz & Diamond Necklace, Sky Blue Topaz & Diamond Necklace, Faceted Heart Shaped Blue Topaz Necklace, Aquamarine Pendant Necklace, Diamond Leaf Pendant Necklace, Diamond Heart Necklace, Freshwater Pearl Necklace
-client 43 got reply goldfish, alpaca, ant farm, bird, cat, dog, ferret, fish, frog, gecko, gerbil, goat, guinea pig, hamster, hedgehog, hermit crab, horse, iguana, mantis, mouse, newt, pig, rabbit, rat, salamander, sheep, snake, spider, stick bug, turtle
+client 43 browse  Pets
+client 37 got reply ITEM,882.18,1363
 client 45 got reply Jewelry, Electronics, Office Supplies, Pets
 client 45 ended, status: ok
-Time 39439
+Time 39430
 client 46 started
 client 46 browse TOPLEVEL
-client 39 purchase  No. 2 pencil
+client 43 got reply goldfish, alpaca, ant farm, bird, cat, dog, ferret, fish, frog, gecko, gerbil, goat, guinea pig, hamster, hedgehog, hermit crab, horse, iguana, mantis, mouse, newt, pig, rabbit, rat, salamander, sheep, snake, spider, stick bug, turtle
 client 46 got reply Jewelry, Electronics, Office Supplies, Pets
+client 37 purchase  Diamond Leaf Pendant Necklace
 client 41 browse  iPhone
-client 42 browse Writing Instruments
-client 44 browse Jewelry
-client 38 purchase  iPhone
 client 40 browse  Diamond Leaf Pendant Necklace
-client 39 ended, status: purchased
-client 43 browse  horse
+client 44 browse Jewelry
 client 41 got reply ITEM,600.0,10
-client 42 got reply pen, No. 2 pencil, typewriter
+client 42 browse Writing Instruments
 client 46 browse  Office Supplies
-client 44 got reply Ring, Necklace, Earring, Bracelet
-client 38 ended, status: purchased
-client 40 got reply 
-client 40 ended, status: timeout
-client 43 got reply 
-client 43 ended, status: dropped
-VM 10 Booting
-VM 11 Booting
-VM 12 Booting
+client 43 browse  horse
+client 37 ended, status: purchased
+client 40 got reply ITEM,882.18,1363
+client 44 got reply 
+client 44 ended, status: dropped
+client 42 got reply pen, No. 2 pencil, typewriter
 client 46 got reply Writing Instruments, Stationary
 client 46 ended, status: ok
+client 43 got reply ITEM,9991.67,3889
 client 41 purchase  iPhone
-client 44 browse  Necklace
-client 42 browse  No. 2 pencil
 client 41 ended, status: purchased
-client 44 got reply Teardrop London Blue Topaz Necklace, Sterling Silver Blue Topaz & Diamond Necklace, Sky Blue Topaz & Diamond Necklace, Faceted Heart Shaped Blue Topaz Necklace, Aquamarine Pendant Necklace, Diamond Leaf Pendant Necklace, Diamond Heart Necklace, Freshwater Pearl Necklace
+client 42 browse  No. 2 pencil
 client 42 got reply ITEM,0.2,10000
-VM 7 Running
-VM 8 Running
-VM 9 Running
+client 40 purchase  Diamond Leaf Pendant Necklace
+client 43 purchase  horse
+client 40 ended, status: purchased
+VM 5 Running
+client 43 ended, status: purchased
 client 42 purchase  No. 2 pencil
-client 44 browse  Sterling Silver Blue Topaz & Diamond Necklace
-client 44 got reply ITEM,535.97,3792
 client 42 ended, status: purchased
-VM 10 Running
-VM 11 Running
-VM 12 Running
-client 44 purchase  Sterling Silver Blue Topaz & Diamond Necklace
-client 44 ended, status: purchased
+END
+Stats: {purchased=23, dropped=9, ok=15}
+Total sales: 29009.867
+Total erroneous sales: 0.0
 VM 0 Ended
 VM 1 Ended
-VM 2 Ended
-VM 6 Ended
-VM 7 Ended
-VM 8 Ended
-VM 9 Ended
-VM 10 Ended
-VM 11 Ended
-VM 12 Ended
-client 36 got reply 
-client 37 got reply 
-client 37 ended, status: timeout
+VM 3 Ended
+VM 4 Ended
+VM 5 Ended
 VM 0 Output ----------------
 VM 1 Output ----------------
 >>>>>I am master
+The time is 19.0
 Created a cache
 Front end has started
-Scaling out middle, numMiddleVM = 1 Time is 79
-Scaling out middle, numMiddleVM = 2 Time is 80
-Scaling out middle, numMiddleVM = 3 Time is 81
-Scaling out middle, numMiddleVM = 4 Time is 82
-Scaling out front, numFrontVM = 1 Time is 82
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 1000; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 2036; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 3064; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 4096; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 5127; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 6150; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 7185; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 8216; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 9260; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 10296; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 11330; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 12358; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 1; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 13401; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 1; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 14431; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 15460; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 1; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 16487; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 1; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 17511; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 18538; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 19561; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 20593; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 1; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 21627; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 1; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 22658; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 1; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 23682; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 24711; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 25747; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 26781; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 27811; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 28831; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 29856; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 30878; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 31912; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 1; avglen = 0; numMiddleVM = 4; numToStart = 0; requestQueue size = 0; the time = 32947; SCALE_OUT_FACTOR = 0.26
-Scaling in middle, numMiddleVM = 4 Time is 33163
-Scaling in middle, numMiddleVM = 3 Time is 33526
-Scaling in middle, numMiddleVM = 2 Time is 33900
-queuelength sum = 0; avglen = 0; numMiddleVM = 1; numToStart = 0; requestQueue size = 0; the time = 33972; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 3; avglen = 0; numMiddleVM = 1; numToStart = 1; requestQueue size = 0; the time = 35002; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 1; avglen = 0; numMiddleVM = 1; numToStart = 0; requestQueue size = 0; the time = 36024; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 4; avglen = 0; numMiddleVM = 1; numToStart = 1; requestQueue size = 0; the time = 37052; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 14; avglen = 1; numMiddleVM = 1; numToStart = 4; requestQueue size = 2; the time = 38090; SCALE_OUT_FACTOR = 0.26
-Scaling out middle, numMiddleVM = 2 Time is 38091
-Scaling out middle, numMiddleVM = 3 Time is 38091
-Scaling out middle, numMiddleVM = 4 Time is 38092
-queuelength sum = 6; avglen = 0; numMiddleVM = 4; numToStart = 2; requestQueue size = 0; the time = 39130; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 17; avglen = 1; numMiddleVM = 4; numToStart = 4; requestQueue size = 4; the time = 40152; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 26; avglen = 2; numMiddleVM = 4; numToStart = 7; requestQueue size = 0; the time = 41178; SCALE_OUT_FACTOR = 0.26
-Scaling out middle, numMiddleVM = 5 Time is 41179
-Scaling out middle, numMiddleVM = 6 Time is 41180
-Scaling out middle, numMiddleVM = 7 Time is 41181
-queuelength sum = 5; avglen = 0; numMiddleVM = 7; numToStart = 1; requestQueue size = 2; the time = 42211; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 3; avglen = 0; numMiddleVM = 7; numToStart = 1; requestQueue size = 0; the time = 43244; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 7; numToStart = 0; requestQueue size = 0; the time = 44274; SCALE_OUT_FACTOR = 0.26
-client 36 ended, status: timeout
-queuelength sum = 0; avglen = 0; numMiddleVM = 7; numToStart = 0; requestQueue size = 0; the time = 45295; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 7; numToStart = 0; requestQueue size = 0; the time = 46327; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 7; numToStart = 0; requestQueue size = 0; the time = 47349; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 7; numToStart = 0; requestQueue size = 0; the time = 48377; SCALE_OUT_FACTOR = 0.26
-queuelength sum = 0; avglen = 0; numMiddleVM = 7; numToStart = 0; requestQueue size = 0; the time = 49408; SCALE_OUT_FACTOR = 0.26
+Need to open 1Front, 2Middle
+Scaling out middle, numMiddleVM = 1 Time is 81
+Scaling out middle, numMiddleVM = 2 Time is 82
+Scaling out front, numFrontVM = 1 Time is 83
+queuelength sum = 0; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 0; the time = 1533; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 0; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 0; the time = 3590; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 0; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 0; the time = 5638; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 0; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 0; the time = 7703; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 0; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 0; the time = 9762; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 2; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 1; the time = 11823; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 0; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 0; the time = 13874; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 2; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 1; the time = 15933; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 6; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 0; the time = 17998; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 2; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 0; the time = 20059; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 13; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 1; the time = 22127; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 8; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 0; the time = 24194; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 3; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 0; the time = 26248; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 2; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 0; the time = 28307; SCALE_OUT_FACTOR = 0.15
+Scaling in middle, numMiddleVM = 2 Time is 30312
+queuelength sum = 5; avglen = 0; numMiddleVM = 1; numToStart = 0; requestQueue size = 1; the time = 30364; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 13; avglen = 0; numMiddleVM = 1; numToStart = 0; requestQueue size = 0; the time = 32418; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 18; avglen = 1; numMiddleVM = 1; numToStart = 0; requestQueue size = 1; the time = 34485; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 14; avglen = 0; numMiddleVM = 1; numToStart = 0; requestQueue size = 1; the time = 36545; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 41; avglen = 2; numMiddleVM = 1; numToStart = 1; requestQueue size = 2; the time = 38603; SCALE_OUT_FACTOR = 0.15
+Scaling out middle, numMiddleVM = 2 Time is 38604
+queuelength sum = 17; avglen = 1; numMiddleVM = 2; numToStart = 0; requestQueue size = 3; the time = 40659; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 1; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 0; the time = 42718; SCALE_OUT_FACTOR = 0.15
+queuelength sum = 1; avglen = 0; numMiddleVM = 2; numToStart = 0; requestQueue size = 0; the time = 44768; SCALE_OUT_FACTOR = 0.15
 VM 2 Output ----------------
 >>>>>I am slave
-Need to scale in. currtime is 8827
-Need to scale in. currtime is 14791
-Need to scale in. currtime is 20840
-Need to scale in. currtime is 27532
+Need to scale in. currtime is 4884
+Need to scale in. currtime is 8850
+Need to scale in. currtime is 24754
+Shutting myself down
 VM 3 Output ----------------
->>>>>I am slave
-Need to scale in. currtime is 8052
-Need to scale in. currtime is 14609
-Need to scale in. currtime is 20389
-Need to scale in. currtime is 27463
-Shutting myself down
-VM 4 Output ----------------
->>>>>I am slave
-Need to scale in. currtime is 9016
-Need to scale in. currtime is 14924
-Need to scale in. currtime is 20830
-Shutting myself down
-VM 5 Output ----------------
->>>>>I am slave
-Need to scale in. currtime is 9325
-Need to scale in. currtime is 14839
-Need to scale in. currtime is 21218
-Shutting myself down
-VM 6 Output ----------------
 >>>>>I am slave
 Frontend: Done getRole
 Frontend Processor started
 Front end has started
-VM 7 Output ----------------
+VM 4 Output ----------------
 >>>>>I am slave
-VM 8 Output ----------------
->>>>>I am slave
-VM 9 Output ----------------
->>>>>I am slave
-VM 10 Output ----------------
->>>>>I am slave
-VM 11 Output ----------------
->>>>>I am slave
-VM 12 Output ----------------
+Need to scale in. currtime is 5909
+Need to scale in. currtime is 9529
+Need to scale in. currtime is 18941
+Need to scale in. currtime is 25324
+VM 5 Output ----------------
 >>>>>I am slave
 --------------------------
-Total VM time: 361920
+Total VM time: 219190
 Cloud shutdown
-END
-Stats: {purchased=22, dropped=7, ok=15, timeout=3}
-Total sales: 18234.018
-Total erroneous sales: 0.0

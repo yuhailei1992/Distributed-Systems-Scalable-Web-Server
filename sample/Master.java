@@ -3,22 +3,20 @@ import java.rmi.*;
 import java.util.*;
 import java.io.IOException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.Exchanger;
 
 public class Master extends UnicastRemoteObject implements IMaster{
 
     public static final int MANAGER_COOLDOWN = 100;
-    public static final int MAX_MIDDLE_VM_NUM = 10;
+    public static final int MAX_MIDDLE_VM_NUM = 11;
     public static final int MIN_MIDDLE_VM_NUM = 1;
     public static final int MAX_FRONT_VM_NUM = 1;
     public static final int INITIAL_DROP_PERIOD = 5000;
     public static final long PURCHASE_REQUEST_TIMEOUT = 1400;
     public static final long REGULAR_REQUEST_TIMEOUT = 600;
-    public static final int SAMPLING_PERIOD = 10;
-    public static float SCALE_OUT_FACTOR = 0.26f;
+    public static final int SAMPLING_PERIOD = 15;
+    public static float SCALE_OUT_FACTOR = 0.15f;
     public static final int FRONT_COOLDOWN = 10;
-
-    public static long prevScaleInTime;
 
     public static int[] sampler;
     public static Cloud.DatabaseOps cache;
@@ -51,6 +49,8 @@ public class Master extends UnicastRemoteObject implements IMaster{
         numMiddleVM = 0;
         scaleInFrontCounter = 0;
         scaleInMiddleCounter = 0;
+
+        System.err.println("The time is " + SL.getTime());
 
         sampler = new int[SAMPLING_PERIOD];
 
@@ -91,10 +91,6 @@ public class Master extends UnicastRemoteObject implements IMaster{
                         requestQueue.add(new RequestWithTimestamp(r));
                     }
 
-//                    if (len > FRONT_THRESHOLD) {
-//                        System.err.println("Front:: need to scale out. my queue len is " + len);
-//                        addFront();
-//                    }
                 } else {
                     try {
                         Thread.sleep(FRONT_COOLDOWN);
@@ -130,9 +126,13 @@ public class Master extends UnicastRemoteObject implements IMaster{
                 }
 
                 if (samplingCounter == 0) {
-                    //int numToStart = Math.round(((float)queueLengthSum / (float)SAMPLING_PERIOD * 2 * SCALE_OUT_FACTOR));
-                    int numToStart = Math.round(((float)queueLengthSum * SCALE_OUT_FACTOR));
+//                    int numToStart = Math.round(((float)queueLengthSum / (float)SAMPLING_PERIOD * 2 * SCALE_OUT_FACTOR));
+                    //int numToStart = Math.round(((float)queueLengthSum * SCALE_OUT_FACTOR));
+
                     int averageLen = queueLengthSum / SAMPLING_PERIOD;
+                    int numToStart = (averageLen + 2) / 4;
+                    numToStart = Math.min(numToStart, 5);
+
                     System.err.println("queuelength sum = " + queueLengthSum +
                             "; avglen = " + averageLen +
                             "; numMiddleVM = " + numMiddleVM +
@@ -140,13 +140,14 @@ public class Master extends UnicastRemoteObject implements IMaster{
                             "; requestQueue size = " + requestQueue.size() +
                             "; the time = " + (System.currentTimeMillis() - startTime) +
                             "; SCALE_OUT_FACTOR = " + SCALE_OUT_FACTOR);
-                    numToStart = Math.min(MAX_MIDDLE_VM_NUM, numToStart);
-                    if (numToStart > numMiddleVM) {
-                        for (; numMiddleVM < numToStart; ) {
-                            scaleOutMiddle();
-                        }
+                    for (int i = 0; i < numToStart; i++) {
+                        scaleOutMiddle();
                     }
-                    //queueLengthSum = 0;
+                    try {
+                        Thread.sleep(500);
+                    } catch (Exception e) {
+
+                    }
                 }
 
                 try{
@@ -291,10 +292,6 @@ public class Master extends UnicastRemoteObject implements IMaster{
         if (System.currentTimeMillis() - startTime > 30000) {
             scaleInMiddle();
         }
-//        if (System.currentTimeMillis() - prevScaleInTime > 5000) {
-//            scaleInMiddle();
-//            prevScaleInTime = System.currentTimeMillis();
-//        }
     }
 
     public void addFront() {
@@ -367,7 +364,6 @@ public class Master extends UnicastRemoteObject implements IMaster{
     // dequeue
     public RequestWithTimestamp deQueue(String name1) throws InterruptedException{
         String name = name1;
-        //RequestWithTimestamp rwt = requestQueue.poll();
         synchronized (appServerQueue) {
             appServerQueue.add(name);
         }

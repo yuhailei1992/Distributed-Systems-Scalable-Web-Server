@@ -93,9 +93,9 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
                             if (sum > SCALE_IN_THRESHOLD) {
                                 System.err.println("Need to scale in. currtime is " + (System.currentTimeMillis() - prevTime));
                                 master.removeMiddle();
-                                if (sum > SCALE_IN_THRESHOLD * 3/2) {
-                                    master.removeMiddle();
-                                }
+//                                if (sum > SCALE_IN_THRESHOLD * 3/2) {
+//                                    master.removeMiddle();
+//                                }
                             }
                             sum = 0;
                         }

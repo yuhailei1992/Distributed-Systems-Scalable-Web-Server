@@ -6,10 +6,8 @@ import java.sql.Timestamp;
 
 public class Server {
 
-    public static final int INITIAL_FRONT_LAYER = 1;
-
-    public static int[] INITIAL = {1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 5, 5, 4, 3, 2};
-
+    public static int[] INITIAL = {1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 5, 4, 3, 2};
+    public static int[] FRONT =   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0};
     public static boolean isMaster;
     /**
      * get the current timestamp as a string
@@ -70,10 +68,12 @@ public class Server {
             master.startFront();
             master.startManager2();
             int numToStartMiddle = INITIAL[Math.round(SL.getTime()-1)];
+            int numToStartFront = FRONT[Math.round(SL.getTime()-1)];
+            System.err.println("Need to open " + numToStartFront + "Front, " + numToStartMiddle + "Middle");
             for (int i = 0; i < numToStartMiddle; i++) {
                 master.scaleOutMiddle();
             }
-            for (int i = 0; i < INITIAL_FRONT_LAYER; i++) {
+            for (int i = 0; i < numToStartFront; i++) {
                 master.scaleOutFront();
             }
 
