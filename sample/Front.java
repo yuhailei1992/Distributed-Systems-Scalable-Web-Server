@@ -1,23 +1,29 @@
+/*
+ The front end server will start a thread that consistently get request, add
+ a timestamp and push it to the master's requestQueue.
 
+ If the front end failed to get a request by SL.getNextRequest, it will sleep
+ for a period.
+ */
 import java.io.IOException;
 import java.rmi.*;
 import java.rmi.server.UnicastRemoteObject;
 
 public class Front extends UnicastRemoteObject implements IFront {
 
-    public static IMaster master;
-    public static ServerLib SL;
-    public static String name;
-    public static final int FRONT_THRESHOLD = 7;
-    public static final int FRONT_COOLDOWN = 50;
-    public static final int SCALE_IN_THRESHOLD = 1000;
+    public static IMaster master; // each server has a master instance
+    public static ServerLib SL; // each server has a SL
+    public static String name; // each server has a name
+
+    public static final int FRONT_THRESHOLD = 7; // threshold to sale out
+    public static final int FRONT_COOLDOWN = 50; // sampling period
+    public static final int SCALE_IN_THRESHOLD = 10000; // threshold to scale in
 
     public Front(String ip, int port, ServerLib SL, String name) throws RemoteException{
         master = Server.getMasterInstance(ip, port);
         this.SL = SL;
         this.name = name;
-        // register at the serverside
-        System.err.println("Frontend: Done getRole");
+        // bind to a name
         try {
             Naming.bind(String.format("//%s:%d/%s", ip, port, name), this);
         } catch (Exception e) {
@@ -25,7 +31,7 @@ public class Front extends UnicastRemoteObject implements IFront {
     }
 
     /**
-     * start a thread of middle
+     * start a thread of front end server
      * @param
      */
     public void startFront() {
@@ -37,7 +43,12 @@ public class Front extends UnicastRemoteObject implements IFront {
         }
     }
 
+    /**
+     * front end processor. get requests, add timestamp, and push it into
+     * the requestQueue in master
+     */
     public class FrontProcessor extends Thread {
+
         public int scaleInCounter;
 
         public FrontProcessor() throws IOException {
@@ -53,29 +64,33 @@ public class Front extends UnicastRemoteObject implements IFront {
             while (true) { // get a request, add it to the queue
                 try {
                     int len = SL.getQueueLength();
-                    if (len > 0) {
+                    if (len > 0) { // decide if scale out or not
                         Cloud.FrontEndOps.Request r = SL.getNextRequest();
                         master.enQueue(new RequestWithTimestamp(r));
-                        // check if need to add front
-                        if (len > FRONT_THRESHOLD) {
+                        if (len > FRONT_THRESHOLD) { // scale out
                             System.err.println("Front:: need to scale out. my queue len is " + len);
                             master.addFront();
                         }
-                    } else {
-//                        scaleInCounter++;
-//                        if (scaleInCounter > SCALE_IN_THRESHOLD) {
-//                            master.removeFront();
-//                            scaleInCounter = 0;
-//                        }
+                    } else { // decide if scale in or not
+                        scaleInCounter++;
+                        if (scaleInCounter > SCALE_IN_THRESHOLD) { // scale in
+                            master.removeFront();
+                            scaleInCounter = 0;
+                        }
+
                         Thread.sleep(FRONT_COOLDOWN);
 
                     }
                 } catch (Exception e) {
+                    System.err.println("Error in front processor thread");
                 }
             }
         }
     }
 
+    /**
+     * RMI. Master calls this method to shutdown a front end server
+     */
     public void suicide() {
         SL.unregister_frontend();
         SL.shutDown();
@@ -83,6 +98,7 @@ public class Front extends UnicastRemoteObject implements IFront {
         try {
             UnicastRemoteObject.unexportObject(this, true);
         } catch (NoSuchObjectException e) {
+            System.err.println("Error in front end suicide method");
         }
     }
 
