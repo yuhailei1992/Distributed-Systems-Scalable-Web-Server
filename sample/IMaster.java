@@ -6,7 +6,7 @@ public interface IMaster extends Remote {
 
     public void enQueue(RequestWithTimestamp rwt) throws RemoteException;
 
-    public RequestWithTimestamp deQueue() throws RemoteException;
+    public RequestWithTimestamp deQueue(String name) throws RemoteException, InterruptedException;
 
     public void addFront() throws RemoteException;
 

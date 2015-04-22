@@ -3,18 +3,19 @@ import java.rmi.*;
 import java.util.*;
 import java.io.IOException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.ThreadFactory;
 
 public class Master extends UnicastRemoteObject implements IMaster{
 
     public static final int MANAGER_COOLDOWN = 100;
-    public static final int MAX_MIDDLE_VM_NUM = 12;
+    public static final int MAX_MIDDLE_VM_NUM = 10;
     public static final int MIN_MIDDLE_VM_NUM = 1;
     public static final int MAX_FRONT_VM_NUM = 1;
     public static final int INITIAL_DROP_PERIOD = 5000;
-    public static final long PURCHASE_REQUEST_TIMEOUT = 1200;
-    public static final long REGULAR_REQUEST_TIMEOUT = 200;
+    public static final long PURCHASE_REQUEST_TIMEOUT = 1400;
+    public static final long REGULAR_REQUEST_TIMEOUT = 600;
     public static final int SAMPLING_PERIOD = 10;
-    public static float SCALE_OUT_FACTOR = 0.5f;
+    public static float SCALE_OUT_FACTOR = 0.26f;
     public static final int FRONT_COOLDOWN = 10;
 
     public static long prevScaleInTime;
@@ -35,6 +36,8 @@ public class Master extends UnicastRemoteObject implements IMaster{
     public static java.util.LinkedList<String> middleList;
     public static java.util.LinkedList<String> frontList;
 
+    public static java.util.LinkedList<String> appServerQueue;
+
     public static Integer numMiddleVM;
     public static Integer numFrontVM;
 
@@ -53,6 +56,7 @@ public class Master extends UnicastRemoteObject implements IMaster{
 
         cache = new Cache(ip, port);
         requestQueue = new java.util.LinkedList<RequestWithTimestamp>();
+        appServerQueue = new LinkedList<String>();
         roleQueue = new java.util.LinkedList<Integer>();
         roleMap = new HashMap<String, Integer>();
         middleList = new LinkedList<String>();
@@ -149,6 +153,37 @@ public class Master extends UnicastRemoteObject implements IMaster{
                     Thread.sleep(MANAGER_COOLDOWN);
                 }catch(InterruptedException e){
                     System.err.println("Got interrupted!");
+                }
+            }
+        }
+    }
+
+    public class Manager2 extends Thread {
+
+        public Manager2() throws IOException {
+        }
+
+        public void run() {
+
+            while (true) {
+                try {
+                    Thread.sleep(10);
+                } catch (Exception e) {
+
+                }
+                if (requestQueue.size() > 0) {
+                    if (appServerQueue.size() > 0) {
+                        String name = null;
+                        synchronized (appServerQueue) {
+                            if (appServerQueue.size() > 0) {
+                                name = appServerQueue.remove(0);
+                            }
+                        }
+
+                        synchronized (name) {
+                            name.notify();
+                        }
+                    }
                 }
             }
         }
@@ -252,11 +287,14 @@ public class Master extends UnicastRemoteObject implements IMaster{
     }
 
 
-    public synchronized void removeMiddle() {
-        if (System.currentTimeMillis() - prevScaleInTime > 5000) {
+    public void removeMiddle() {
+        if (System.currentTimeMillis() - startTime > 30000) {
             scaleInMiddle();
-            prevScaleInTime = System.currentTimeMillis();
         }
+//        if (System.currentTimeMillis() - prevScaleInTime > 5000) {
+//            scaleInMiddle();
+//            prevScaleInTime = System.currentTimeMillis();
+//        }
     }
 
     public void addFront() {
@@ -270,17 +308,17 @@ public class Master extends UnicastRemoteObject implements IMaster{
     // get role
     public Integer getRole(String name) {
         //int role = roleQueue.poll();
-        int role = 0;
+        int role;
         synchronized (roleQueue) {
             role = roleQueue.removeFirst();
         }
         if (role == 0) {//front
-            System.err.println("getRole: front " + name);
+//            System.err.println("getRole: front " + name);
             synchronized (frontList) {
                 frontList.add(name);
             }
         } else {
-            System.err.println("getRole: middle" + name);
+//            System.err.println("getRole: middle" + name);
             synchronized (middleList) {
                 middleList.add(name);
             }
@@ -306,6 +344,14 @@ public class Master extends UnicastRemoteObject implements IMaster{
         }
     }
 
+    public void startManager2() {
+        try {
+            Manager2 xx = new Manager2();
+            xx.start();
+        } catch (Exception e) {
+        }
+    }
+
     public void setStartTime() {
         startTime = System.currentTimeMillis();
     }
@@ -319,8 +365,16 @@ public class Master extends UnicastRemoteObject implements IMaster{
     }
 
     // dequeue
-    public RequestWithTimestamp deQueue() {
+    public RequestWithTimestamp deQueue(String name1) throws InterruptedException{
+        String name = name1;
         //RequestWithTimestamp rwt = requestQueue.poll();
+        synchronized (appServerQueue) {
+            appServerQueue.add(name);
+        }
+        synchronized (name) {
+            name.wait();
+        }
+
         long currTime = System.currentTimeMillis();
         RequestWithTimestamp rwt;
         while (true) {

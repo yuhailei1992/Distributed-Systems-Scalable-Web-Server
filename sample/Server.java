@@ -68,6 +68,7 @@ public class Server {
             Master master = new Master(ip, port, SL);
             master.startManager();
             master.startFront();
+            master.startManager2();
             int numToStartMiddle = INITIAL[Math.round(SL.getTime()-1)];
             for (int i = 0; i < numToStartMiddle; i++) {
                 master.scaleOutMiddle();

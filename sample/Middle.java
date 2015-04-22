@@ -14,17 +14,17 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
     public static String name;
     public static Cloud.DatabaseOps cache;
     public int scaleInCounter;
-    public static final int SCALE_IN_THRESHOLD =6000;
+    public static final int SCALE_IN_THRESHOLD =1400;
     public static final int SAMPLING_PERIOD = 7;
 
     /**
      * constructor, bind the object to a name
      */
-    public Middle(String ip, int port, ServerLib SL, String name) throws RemoteException{
+    public Middle(String ip, int port, ServerLib SL, String name1) throws RemoteException{
         master = Server.getMasterInstance(ip, port);
         cache = Server.getCacheInstance(ip, port);
         this.SL = SL;
-        this.name = name;
+        this.name = name1;
         scaleInCounter = 0;
 
         // register at the serverside
@@ -52,25 +52,33 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
 
         public long prevTime;
         public int cnt;
+        long sum;
 
         public Processor() throws IOException {
-            System.err.println("Middle layer started");
+//            System.err.println("Middle layer started");
             prevTime = System.currentTimeMillis();
             cnt = 0;
+            sum = 0;
         }
 
         public void run() {
+
             RequestWithTimestamp rwt;
+
             while (true) {
 
                 try {
                     // get a request
-                    rwt = master.deQueue();
+                    long a = System.currentTimeMillis();
+                    rwt = master.deQueue(name);
+                    long b = System.currentTimeMillis();
+                    long elapsed = b - a;
+                    sum += elapsed;
 
                     if (rwt != null) {
 
-                        System.err.println("New request, time is " + (System.currentTimeMillis() - prevTime) +
-                        "\t cnt is " + cnt);
+//                        System.err.println("New request, time is " + (System.currentTimeMillis() - prevTime) +
+//                        "\t cnt is " + cnt);
 
                         if (!rwt.r.isPurchase) {
 //                            System.err.println("Processing with cache, the elapsed time is " + (System.currentTimeMillis() - rwt.millis));
@@ -81,17 +89,18 @@ public class Middle extends UnicastRemoteObject implements IMiddle{
                         }
 
                         cnt = (cnt + 1) % SAMPLING_PERIOD;
-//
                         if (cnt == 0) {
-                            if (System.currentTimeMillis() - prevTime > SCALE_IN_THRESHOLD) {
+                            if (sum > SCALE_IN_THRESHOLD) {
                                 System.err.println("Need to scale in. currtime is " + (System.currentTimeMillis() - prevTime));
                                 master.removeMiddle();
+                                if (sum > SCALE_IN_THRESHOLD * 3/2) {
+                                    master.removeMiddle();
+                                }
                             }
-                            prevTime = System.currentTimeMillis();
+                            sum = 0;
                         }
-
                     } else {
-                        Thread.sleep(50);
+
                     }
                 } catch (Exception e) {
                 }
